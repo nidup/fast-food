@@ -79,7 +79,7 @@ function create() {
 
     zombie = game.add.sprite(100, 200, 'zombie');
     game.physics.p2.enable(zombie);
-
+    zombie.body.fixedRotation = true;
     zombie.body.setCollisionGroup(zombieCG);
     zombie.body.collides(playerCG);
     zombie.body.collides(wallsCG);
@@ -90,7 +90,7 @@ function create() {
 
     hero = game.add.sprite(250, 120, 'hero');
     game.physics.p2.enable(hero, false);
-
+    hero.body.fixedRotation = true;
     hero.body.setCircle(28);
 
     hero.animations.add('walk-down', [0, 1, 2], frameRate, true);
