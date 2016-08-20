@@ -1,7 +1,8 @@
-var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'content', {
+var game = new Phaser.Game(1000, 700, Phaser.CANVAS, 'content', {
     preload: preload,
     create: create,
-    update: update
+    update: update,
+    render: render
 });
 
 var map;
@@ -26,20 +27,23 @@ var text;
 var count = 0;
 var zombie;
 
+var walls;
+
 function preload() {
     //game.load.tilemap('map', "test-desert.json", null, Phaser.Tilemap.TILED_JSON);
-    game.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', "tilemap-custo.json", null, Phaser.Tilemap.TILED_JSON);
     game.load.image(tilesetName, tilesetUrl);
     game.load.image(shroomName, shroomUrl);
-    game.load.spritesheet('zombie', zombieSprite, 40, 40, 8);
-    game.load.spritesheet('hero', heroSprite, 40, 40, 8);
+    game.load.spritesheet('zombie', zombieSprite, 40, 40, 12);
+    game.load.spritesheet('hero', heroSprite, 40, 40, 12);
 }
 
 function create() {
 
     game.physics.startSystem(Phaser.Physics.P2JS);
-    cursors = game.input.keyboard.createCursorKeys();
     game.physics.p2.setImpactEvents(true);
+
+    cursors = game.input.keyboard.createCursorKeys();
 
     map = game.add.tilemap('map');
     map.addTilesetImage(tilesetName);
@@ -49,9 +53,9 @@ function create() {
     var wallsCG =  game.physics.p2.createCollisionGroup();
     var zombieCG = game.physics.p2.createCollisionGroup();
 
-    var walls = game.physics.p2.convertCollisionObjects(map, "Collisions", true);
+    walls = game.physics.p2.convertCollisionObjects(map, "Collisions", true);
 
-    console.log(walls);
+    //console.log(walls);
 
     for(var wall in walls) {
         walls[wall].setCollisionGroup(wallsCG);
@@ -81,10 +85,8 @@ function create() {
     zombie.body.collides(wallsCG);
     zombie.animations.add('walk-down', [0, 1, 2], frameRate, true);
     zombie.animations.add('walk-right', [3, 4, 5], frameRate, true);
-    zombie.animations.add('walk-top', [6, 7, 8], frameRate, true);
+    zombie.animations.add('walk-up', [6, 7, 8], frameRate, true);
     zombie.animations.add('walk-left', [9, 10, 11], frameRate, true);
-    //zombie.animations.play('walk-right');
-
 
     hero = game.add.sprite(250, 120, 'hero');
     game.physics.p2.enable(hero, false);
@@ -93,17 +95,14 @@ function create() {
 
     hero.animations.add('walk-down', [0, 1, 2], frameRate, true);
     hero.animations.add('walk-right', [3, 4, 5], frameRate, true);
-    hero.animations.add('walk-top', [6, 7, 8], frameRate, true);
+    hero.animations.add('walk-up', [6, 7, 8], frameRate, true);
     hero.animations.add('walk-left', [9, 10, 11], frameRate, true);
-
-    //hero.animations.play('walk-right');
 
     hero.anchor.setTo(0.5, 0.5);
     hero.body.setCollisionGroup(playerCG);
     hero.body.collides(zombieCG, die, this);
     hero.body.collides(wallsCG);
     hero.body.collides(shroomCG, collectCoin, this);
-
 
     layer.resizeWorld();
 
@@ -118,8 +117,76 @@ function create() {
 
 }
 
-function die(player)
-{
+function update() {
+
+    text.x = game.camera.x;
+    text.y = game.camera.y;
+
+    move();
+
+    followHero();
+}
+
+function render() {
+    game.debug.text('Collide!', 32, 32);
+}
+
+function move() {
+    hero.body.velocity.x = 0;
+    hero.body.velocity.y = 0;
+
+    if (cursors.left.isDown) {
+        hero.body.velocity.x = -200;
+        hero.animations.play('walk-left');
+
+    } else if (cursors.right.isDown) {
+        hero.body.velocity.x = 200;
+        hero.animations.play('walk-right');
+
+    } else if (cursors.up.isDown) {
+        hero.body.velocity.y = -200;
+        hero.animations.play('walk-up');
+
+    } else if (cursors.down.isDown) {
+        hero.body.velocity.y = 200;
+        hero.animations.play('walk-down');
+    }
+}
+
+function followHero() {
+
+    var zombieSpeed = 20;
+    if (hero.body.y < zombie.body.y) {
+        zombie.body.velocity.y = zombieSpeed * -1;
+    } else  {
+        zombie.body.velocity.y = zombieSpeed;
+    }
+
+    if (hero.body.x < zombie.body.x) {
+        zombie.body.velocity.x = zombieSpeed * -1;
+    } else {
+        zombie.body.velocity.x = zombieSpeed;
+    }
+
+    var diffY = hero.body.y - zombie.body.y;
+    var diffX = hero.body.x - zombie.body.x;
+
+    if (diffY >= diffX) {
+        if (hero.body.y <= zombie.body.y) {
+            zombie.animations.play('walk-up');
+        } else {
+            zombie.animations.play('walk-down');
+        }
+    } else {
+        if (hero.body.x <= zombie.body.x) {
+            zombie.animations.play('walk-left');
+        } else {
+            zombie.animations.play('walk-right');
+        }
+    }
+}
+
+function die(player) {
     player.sprite.kill();
     var dieText = this.game.add.text(game.camera.width / 2, game.camera.height / 2, "Score: 0", {
         font: "48px Arial",
@@ -133,58 +200,6 @@ function die(player)
 
 function updateText() {
     text.setText("Score:" + count);
-
-}
-var zombieSpeed = 20;
-
-function followHero() {
-
-    if (hero.body.y < zombie.body.y) {
-        zombie.body.velocity.y = zombieSpeed * -1;
-    } else  {
-        zombie.body.velocity.y = zombieSpeed;
-    }
-    if (hero.body.x < zombie.body.x) {
-        zombie.body.velocity.x = zombieSpeed * -1;
-    } else {
-        zombie.body.velocity.x = zombieSpeed;
-    }
-
-    if (hero.body.y < zombie.body.y) {
-        zombie.animations.play('walk-up');
-    } else {
-        zombie.animations.play('walk-down');
-    }
-}
-
-function update() {
-
-    text.x = game.camera.x;
-    text.y = game.camera.y;
-
-    followHero();
-
-    hero.body.velocity.x = 0;
-    hero.body.velocity.y = 0;
-    if (cursors.left.isDown) {
-        hero.body.velocity.x = -200;
-        hero.animations.play('walk-up');
-
-    } else if (cursors.right.isDown) {
-        hero.body.velocity.x = 200;
-        hero.animations.play('walk-up');
-
-    } else if (cursors.up.isDown) {
-        hero.body.velocity.y = -200;
-        hero.animations.play('walk-up');
-
-/*        console.log('uppp');
-        console.log(hero.animations.currentAnim.name)*/
-
-    } else if (cursors.down.isDown) {
-        hero.body.velocity.y = 200;
-        hero.animations.play('walk-up');
-    }
 
 }
 
