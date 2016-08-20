@@ -19,7 +19,8 @@ var shroomUrl = '/assets/Mushroom.png';
 
 var backgroundName = 'Ground';
 
-var zombieSprite = '/assets/GirlLightExample.png';
+var zombie1Sprite = '/assets/Zombie2.png';
+var zombie2Sprite = '/assets/Zombie2.png';
 var heroSprite = '/assets/HatGuy.png';
 var frameRate = 5;
 
@@ -31,7 +32,8 @@ function preload() {
     game.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
     game.load.image(tilesetName, tilesetUrl);
     game.load.image(shroomName, shroomUrl);
-    game.load.spritesheet('zombie', zombieSprite, 40, 40, 12);
+    game.load.spritesheet('zombie1', zombie1Sprite, 40, 40, 12);
+    game.load.spritesheet('zombie2', zombie2Sprite, 40, 40, 12);
     game.load.spritesheet('hero', heroSprite, 40, 40, 12);
 }
 
@@ -66,7 +68,6 @@ function create() {
         game.physics.arcade.enable(shroom);
     }
 
-
     zombie = game.add.sprite(50, 200, 'zombie');
     game.physics.arcade.enable(zombie);
     zombie.body.fixedRotation = true;
@@ -83,8 +84,6 @@ function create() {
     hero.animations.add('walk-right', [3, 4, 5], frameRate, true);
     hero.animations.add('walk-up', [6, 7, 8], frameRate, true);
     hero.animations.add('walk-left', [9, 10, 11], frameRate, true);
-
-    hero.anchor.setTo(0.5, 0.5);
 
     hero.body.collideWorldBounds = true;
     hero.body.bounce.set(1);
@@ -115,9 +114,8 @@ function update() {
 }
 
 function render() {
-    game.debug.text('Collide!', 32, 32);
-
-    layer.debug;
+    //game.debug.text('Collide!', 32, 32);
+    //layer.debug;
 }
 
 function move() {
@@ -187,13 +185,12 @@ function die(player) {
 
 }
 
-function updateText() {
+function updateScore() {
     text.setText("Score:" + count);
-
 }
 
 function eat(player, mushroom) {
     mushroom.kill();
     count++;
-    updateText();
+    updateScore();
 }
