@@ -1,196 +1,188 @@
-var game = new Phaser.Game(1000, 700, Phaser.CANVAS, 'content', {
-    preload: preload,
-    create: create,
-    update: update,
-    render: render
-});
+var game = new Phaser.Game(1000, 700, Phaser.CANVAS, 'content');
 
-var map;
-var layer;
+var FastFoodGame = function (game) {
+    this.map = null;
+    this.layer = null;
 
-var cursors;
-var hero;
-var mushrooms;
-var tilesetName = 'Desert';
-var tilesetUrl = '/assets/Desert.png';
+    this.hero = null;
+    this.isDead = false;
+    this.mushrooms = [];
+    this.zombie;
 
-var shroomName = 'mushrooms';
-var shroomUrl = '/assets/Mushroom.png';
+    this.cursors = null;
 
-var backgroundName = 'Ground';
+    this.frameRate = 5;
 
-var zombie1Sprite = '/assets/Zombie2.png';
-var zombie2Sprite = '/assets/Zombie2.png';
-var heroSprite = '/assets/HatGuy.png';
-var frameRate = 5;
+    this.scoreText = null;
+    this.count = 0;
 
-var text;
-var count = 0;
-var zombie;
+    this.game = game;
+};
 
-function preload() {
-    game.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
-    game.load.image(tilesetName, tilesetUrl);
-    game.load.image(shroomName, shroomUrl);
-    game.load.spritesheet('zombie1', zombie1Sprite, 40, 40, 12);
-    game.load.spritesheet('zombie2', zombie2Sprite, 40, 40, 12);
-    game.load.spritesheet('hero', heroSprite, 40, 40, 12);
-}
+FastFoodGame.prototype = {
 
-function create() {
+    preload : function () {
+        this.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('Desert', '/assets/Desert.png');
+        this.load.image('mushrooms', '/assets/Mushroom.png');
+        this.load.spritesheet('zombie1', '/assets/Zombie1.png', 40, 40, 12);
+        this.load.spritesheet('zombie2', '/assets/Zombie2.png', 40, 40, 12);
+        this.load.spritesheet('hero', '/assets/HatGuy.png', 40, 40, 12);
+    },
 
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    cursors = game.input.keyboard.createCursorKeys();
+    create : function () {
 
-    map = game.add.tilemap('map');
-    map.addTilesetImage(tilesetName);
+        this.physics.startSystem(Phaser.Physics.ARCADE);
+        this.cursors = this.input.keyboard.createCursorKeys();
 
-    layer = map.createLayer(backgroundName);
-    layer.resizeWorld();
+        this.map = this.add.tilemap('map');
+        this.map.addTilesetImage('Desert');
+        this.layer = this.map.createLayer('Ground');
+        this.layer.resizeWorld();
 
-    map.setCollision(
-        [
-            1, 2, 3,
-            9, 10, 11,
-            17, 18, 19, 20, 21,
-            25, 26, 27, 28, 29,
-            33, 34, 35, 36, 37,
-            41, 42, 43, 44, 45
-        ]
-    );
+        this.map.setCollision(
+            [
+                1, 2, 3,
+                9, 10, 11,
+                17, 18, 19, 20, 21,
+                25, 26, 27, 28, 29,
+                33, 34, 35, 36, 37,
+                41, 42, 43, 44, 45
+            ]
+        );
 
-    mushrooms = game.add.group();
-    mushrooms.enableBody = true;
-    mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
+        this.mushrooms = this.add.group();
+        this.mushrooms.enableBody = true;
+        this.mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
 
-    for (i = 0; i < 100; i++) {
-        var shroom = mushrooms.create(game.world.randomX, game.world.randomY, shroomName);
-        game.physics.arcade.enable(shroom);
-    }
-
-    zombie = game.add.sprite(50, 200, 'zombie');
-    game.physics.arcade.enable(zombie);
-    zombie.body.fixedRotation = true;
-    zombie.animations.add('walk-down', [0, 1, 2], frameRate, true);
-    zombie.animations.add('walk-right', [3, 4, 5], frameRate, true);
-    zombie.animations.add('walk-up', [6, 7, 8], frameRate, true);
-    zombie.animations.add('walk-left', [9, 10, 11], frameRate, true);
-
-    hero = game.add.sprite(100, 120, 'hero');
-    game.physics.arcade.enable(hero);
-    hero.body.fixedRotation = true;
-
-    hero.animations.add('walk-down', [0, 1, 2], frameRate, true);
-    hero.animations.add('walk-right', [3, 4, 5], frameRate, true);
-    hero.animations.add('walk-up', [6, 7, 8], frameRate, true);
-    hero.animations.add('walk-left', [9, 10, 11], frameRate, true);
-
-    hero.body.collideWorldBounds = true;
-    hero.body.bounce.set(1);
-
-    game.camera.follow(hero);
-
-    text = game.add.text(game.camera.x,game.camera.y, "Score: 0", {
-        font: "24px Arial",
-        fill: "#ff0044",
-        align: "center"
-    });
-
-}
-
-function update() {
-
-    text.x = game.camera.x;
-    text.y = game.camera.y;
-
-    game.physics.arcade.collide(hero, zombie, die);
-    game.physics.arcade.collide(hero, mushrooms, eat);
-    game.physics.arcade.collide(hero, layer);
-    game.physics.arcade.collide(zombie, layer);
-
-    move();
-
-    followHero();
-}
-
-function render() {
-    //game.debug.text('Collide!', 32, 32);
-    //layer.debug;
-}
-
-function move() {
-    hero.body.velocity.x = 0;
-    hero.body.velocity.y = 0;
-
-    if (cursors.left.isDown) {
-        hero.body.velocity.x = -200;
-        hero.animations.play('walk-left');
-
-    } else if (cursors.right.isDown) {
-        hero.body.velocity.x = 200;
-        hero.animations.play('walk-right');
-
-    } else if (cursors.up.isDown) {
-        hero.body.velocity.y = -200;
-        hero.animations.play('walk-up');
-
-    } else if (cursors.down.isDown) {
-        hero.body.velocity.y = 200;
-        hero.animations.play('walk-down');
-    }
-}
-
-function followHero() {
-
-    var zombieSpeed = 20;
-    if (hero.body.y < zombie.body.y) {
-        zombie.body.velocity.y = zombieSpeed * -1;
-    } else  {
-        zombie.body.velocity.y = zombieSpeed;
-    }
-
-    if (hero.body.x < zombie.body.x) {
-        zombie.body.velocity.x = zombieSpeed * -1;
-    } else {
-        zombie.body.velocity.x = zombieSpeed;
-    }
-
-    var diffY = hero.body.y - zombie.body.y;
-    var diffX = hero.body.x - zombie.body.x;
-
-    if (diffY >= diffX) {
-        if (hero.body.y <= zombie.body.y) {
-            zombie.animations.play('walk-up');
-        } else {
-            zombie.animations.play('walk-down');
+        for (i = 0; i < 100; i++) {
+            var shroom = this.mushrooms.create(this.world.randomX, this.world.randomY, 'mushrooms');
+            this.physics.arcade.enable(shroom);
         }
-    } else {
-        if (hero.body.x <= zombie.body.x) {
-            zombie.animations.play('walk-left');
-        } else {
-            zombie.animations.play('walk-right');
+
+        this.zombie = this.add.sprite(50, 200, 'zombie1');
+        this.physics.arcade.enable(this.zombie);
+        this.zombie.body.fixedRotation = true;
+        this.zombie.animations.add('walk-down', [0, 1, 2], this.frameRate, true);
+        this.zombie.animations.add('walk-right', [3, 4, 5], this.frameRate, true);
+        this.zombie.animations.add('walk-up', [6, 7, 8], this.frameRate, true);
+        this.zombie.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
+
+        this.hero = this.add.sprite(100, 120, 'hero');
+        this.physics.arcade.enable(this.hero);
+        this.hero.body.fixedRotation = true;
+
+        this.hero.animations.add('walk-down', [0, 1, 2], this.frameRate, true);
+        this.hero.animations.add('walk-right', [3, 4, 5], this.frameRate, true);
+        this.hero.animations.add('walk-up', [6, 7, 8], this.frameRate, true);
+        this.hero.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
+
+        this.hero.body.collideWorldBounds = true;
+        this.hero.body.bounce.set(1);
+
+        this.camera.follow(this.hero);
+
+        this.scoreText = this.add.text(this.camera.x, this.camera.y, "Score: 0", {
+            font: "24px Arial",
+            fill: "#ff0044",
+            align: "center"
+        });
+
+    },
+
+    update : function() {
+
+        this.scoreText.x = this.camera.x;
+        this.scoreText.y = this.camera.y;
+        this.scoreText.setText('Score:' + this.count);
+
+        this.physics.arcade.collide(this.hero, this.zombie, this.die, null, this);
+        this.physics.arcade.collide(this.hero, this.mushrooms, this.eat, null, this);
+        this.physics.arcade.collide(this.hero, this.layer);
+        this.physics.arcade.collide(this.zombie, this.layer);
+
+        this.move();
+        this.followHero();
+
+        if (this.isDead) {
+            var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Score: 0", {
+                font: "48px Arial",
+                fill: "#ff0044",
+                align: "left"
+            });
+            dieText.fixedToCamera = false;
+            dieText.setText("YOU DIED");
         }
+    },
+
+    render : function () {
+        //layer.debug;
+    },
+
+    move : function () {
+        this.hero.body.velocity.x = 0;
+        this.hero.body.velocity.y = 0;
+
+        if (this.cursors.left.isDown) {
+            this.hero.body.velocity.x = -200;
+            this.hero.animations.play('walk-left');
+
+        } else if (this.cursors.right.isDown) {
+            this.hero.body.velocity.x = 200;
+            this.hero.animations.play('walk-right');
+
+        } else if (this.cursors.up.isDown) {
+            this.hero.body.velocity.y = -200;
+            this.hero.animations.play('walk-up');
+
+        } else if (this.cursors.down.isDown) {
+            this.hero.body.velocity.y = 200;
+            this.hero.animations.play('walk-down');
+        }
+    },
+
+    followHero : function () {
+
+        var zombieSpeed = 20;
+        if (this.hero.body.y < this.zombie.body.y) {
+            this.zombie.body.velocity.y = zombieSpeed * -1;
+        } else  {
+            this.zombie.body.velocity.y = zombieSpeed;
+        }
+
+        if (this.hero.body.x < this.zombie.body.x) {
+            this.zombie.body.velocity.x = zombieSpeed * -1;
+        } else {
+            this.zombie.body.velocity.x = zombieSpeed;
+        }
+
+        var diffY = this.hero.body.y - this.zombie.body.y;
+        var diffX = this.hero.body.x - this.zombie.body.x;
+
+        if (diffY >= diffX) {
+            if (this.hero.body.y <= this.zombie.body.y) {
+                this.zombie.animations.play('walk-up');
+            } else {
+                this.zombie.animations.play('walk-down');
+            }
+        } else {
+            if (this.hero.body.x <= this.zombie.body.x) {
+                this.zombie.animations.play('walk-left');
+            } else {
+                this.zombie.animations.play('walk-right');
+            }
+        }
+    },
+
+    die : function (player) {
+        player.kill();
+        this.isDead = true;
+    },
+
+    eat : function (player, mushroom) {
+        mushroom.kill();
+        this.count++;
     }
-}
+};
 
-function die(player) {
-    player.kill();
-    var dieText = game.add.text(game.camera.width / 2, game.camera.height / 2, "Score: 0", {
-        font: "48px Arial",
-        fill: "#ff0044",
-        align: "left"
-    });
-    dieText.fixedToCamera = false;
-    dieText.setText("YOU DIED");
-
-}
-
-function updateScore() {
-    text.setText("Score:" + count);
-}
-
-function eat(player, mushroom) {
-    mushroom.kill();
-    count++;
-    updateScore();
-}
+game.state.add('Game', FastFoodGame, true);
