@@ -37,17 +37,11 @@ Hero.prototype.move = function(cursors) {
     }
 };
 
-Hero.prototype.update = function(zombie, mushrooms) {
-    this.game.physics.arcade.collide(this.sprite, zombie, this.die, null, this);
+Hero.prototype.update = function(zombieSprite, mushrooms) {
+    this.game.physics.arcade.collide(this.sprite, zombieSprite, this.die, null, this);
     this.game.physics.arcade.collide(this.sprite, mushrooms, this.eat, null, this);
     this.game.physics.arcade.collide(this.sprite, this.game.layer);
 };
-
-Hero.prototype.checkKeys = function(cursors) {
-
-
-};
-
 
 Hero.prototype.die = function (player) {
     player.kill();
@@ -58,79 +52,3 @@ Hero.prototype.eat = function (player, mushroom) {
     mushroom.kill();
     this.countMushrooms++;
 };
-
-
-/*
-Pacman.prototype.eatDot = function(pacman, dot) {
-    dot.kill();
-
-    this.game.score ++;
-    this.game.numDots --;
-
-    if (this.game.dots.total === 0)
-    {
-        this.game.dots.callAll('revive');
-    }
-};
-
-Pacman.prototype.eatPill = function(pacman, pill) {
-    pill.kill();
-
-    this.game.score ++;
-    this.game.numPills --;
-
-    this.game.enterFrightenedMode();
-};
-
-Pacman.prototype.turn = function () {
-    var cx = Math.floor(this.sprite.x);
-    var cy = Math.floor(this.sprite.y);
-
-    //  This needs a threshold, because at high speeds you can't turn because the coordinates skip past
-    if (!this.game.math.fuzzyEqual(cx, this.turnPoint.x, this.threshold) || !this.game.math.fuzzyEqual(cy, this.turnPoint.y, this.threshold))
-    {
-        return false;
-    }
-
-    //  Grid align before turning
-    this.sprite.x = this.turnPoint.x;
-    this.sprite.y = this.turnPoint.y;
-
-    this.sprite.body.reset(this.turnPoint.x, this.turnPoint.y);
-    this.move(this.turning);
-    this.turning = Phaser.NONE;
-
-    return true;
-};
-
-Pacman.prototype.checkDirection = function (turnTo) {
-    if (this.turning === turnTo || this.directions[turnTo] === null || this.directions[turnTo].index !== this.safetile)
-    {
-        //  Invalid direction if they're already set to turn that way
-        //  Or there is no tile there, or the tile isn't index 1 (a floor tile)
-        return;
-    }
-
-    //  Check if they want to turn around and can
-    if (this.current === this.opposites[turnTo])
-    {
-        this.move(turnTo);
-        this.keyPressTimer = this.game.time.time;
-    }
-    else
-    {
-        this.turning = turnTo;
-
-        this.turnPoint.x = (this.marker.x * this.gridsize) + (this.gridsize / 2);
-        this.turnPoint.y = (this.marker.y * this.gridsize) + (this.gridsize / 2);
-        this.want2go = Phaser.NONE;
-    }
-};
-
-Pacman.prototype.getPosition = function () {
-    return new Phaser.Point((this.marker.x * this.gridsize) + (this.gridsize / 2), (this.marker.y * this.gridsize) + (this.gridsize / 2));
-};
-
-Pacman.prototype.getCurrentDirection = function() {
-    return this.current;
-};*/

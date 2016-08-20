@@ -54,13 +54,8 @@ FastFoodGame.prototype = {
             this.physics.arcade.enable(shroom);
         }
 
-        this.zombie = this.add.sprite(50, 200, 'zombie1');
-        this.physics.arcade.enable(this.zombie);
-        this.zombie.body.fixedRotation = true;
-        this.zombie.animations.add('walk-down', [0, 1, 2], this.frameRate, true);
-        this.zombie.animations.add('walk-right', [3, 4, 5], this.frameRate, true);
-        this.zombie.animations.add('walk-up', [6, 7, 8], this.frameRate, true);
-        this.zombie.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
+        this.zombie = new Zombie(this, 'zombie1', {x: 50, y: 200})
+
         this.hero = new Hero(this, 'hero', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
 
@@ -78,12 +73,11 @@ FastFoodGame.prototype = {
         this.scoreText.y = this.camera.y;
         this.scoreText.setText('Score:' + this.hero.countMushrooms);
 
-        this.hero.update(this.zombie, this.mushrooms);
+        this.hero.update(this.zombie.sprite, this.mushrooms);
         this.hero.move(this.cursors);
 
-        this.physics.arcade.collide(this.zombie, this.layer);
-
-        this.followHero();
+        this.zombie.update();
+        this.zombie.follow(this.hero);
 
         if (this.hero.isDead) {
             var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Score: 0", {
@@ -98,39 +92,6 @@ FastFoodGame.prototype = {
 
     render : function () {
         //layer.debug;
-    },
-
-    followHero : function () {
-
-        var zombieSpeed = 20;
-        if (this.hero.sprite.body.y < this.zombie.body.y) {
-            this.zombie.body.velocity.y = zombieSpeed * -1;
-        } else  {
-            this.zombie.body.velocity.y = zombieSpeed;
-        }
-
-        if (this.hero.sprite.body.x < this.zombie.body.x) {
-            this.zombie.body.velocity.x = zombieSpeed * -1;
-        } else {
-            this.zombie.body.velocity.x = zombieSpeed;
-        }
-
-        var diffY = this.hero.sprite.body.y - this.zombie.body.y;
-        var diffX = this.hero.sprite.body.x - this.zombie.body.x;
-
-        if (diffY >= diffX) {
-            if (this.hero.sprite.body.y <= this.zombie.body.y) {
-                this.zombie.animations.play('walk-up');
-            } else {
-                this.zombie.animations.play('walk-down');
-            }
-        } else {
-            if (this.hero.sprite.body.x <= this.zombie.body.x) {
-                this.zombie.animations.play('walk-left');
-            } else {
-                this.zombie.animations.play('walk-right');
-            }
-        }
     }
 };
 
