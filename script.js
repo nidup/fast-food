@@ -6,8 +6,8 @@ var FastFoodGame = function (game) {
     this.layer = null;
 
     this.hero = null;
+    this.zombies = [];
     this.mushrooms = [];
-    this.zombie;
 
     this.cursors = null;
     this.frameRate = 5;
@@ -54,7 +54,12 @@ FastFoodGame.prototype = {
             this.physics.arcade.enable(shroom);
         }
 
-        this.zombie = new Zombie(this, 'zombie1', {x: 50, y: 200})
+        this.zombies.push(
+            new Zombie(this, 'zombie1', {x: 50, y: 200}),
+            new Zombie(this, 'zombie1', {x: 50, y: 300}),
+            new Zombie(this, 'zombie2', {x: 50, y: 10}),
+            new Zombie(this, 'zombie2', {x: 200, y: 300})
+        );
 
         this.hero = new Hero(this, 'hero', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
@@ -73,11 +78,13 @@ FastFoodGame.prototype = {
         this.scoreText.y = this.camera.y;
         this.scoreText.setText('Score:' + this.hero.countMushrooms);
 
-        this.hero.update(this.zombie.sprite, this.mushrooms);
+        this.hero.update(this.zombies, this.mushrooms);
         this.hero.move(this.cursors);
 
-        this.zombie.update();
-        this.zombie.follow(this.hero);
+        for (var i=0; i<this.zombies.length; i++) {
+            this.zombies[i].update(this.zombies);
+            this.zombies[i].follow(this.hero);
+        }
 
         if (this.hero.isDead) {
             var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Score: 0", {

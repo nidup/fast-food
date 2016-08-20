@@ -45,6 +45,11 @@ Zombie.prototype.follow = function(hero) {
     }
 };
 
-Zombie.prototype.update = function() {
+Zombie.prototype.update = function(zombies) {
     this.game.physics.arcade.collide(this.sprite, this.game.layer);
+    var zombieSprites = [];
+    for (var i=0; i<zombies.length; i++) {
+        zombieSprites.push(zombies[i].sprite);
+    }
+    this.game.physics.arcade.collide(this.sprite, zombieSprites);
 };
