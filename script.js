@@ -7,6 +7,7 @@ var FastFoodGame = function (game) {
 
     this.hero = null;
     this.zombies = [];
+    this.victims = [];
     this.mushrooms = [];
 
     this.cursors = null;
@@ -35,7 +36,11 @@ FastFoodGame.prototype = {
         this.load.spritesheet('zombie4', '/assets/Zombie4.png', 40, 40, 12);
         this.load.spritesheet('zombie5', '/assets/Zombie5.png', 40, 40, 12);
         this.load.spritesheet('zombie6', '/assets/Zombie6.png', 40, 40, 12);
-        this.load.spritesheet('hero', '/assets/HatGuy.png', 40, 40, 12);
+        this.load.spritesheet('hero', '/assets/Victim1.png', 40, 40, 12);
+        this.load.spritesheet('victim2', '/assets/Victim2.png', 40, 40, 12);
+        this.load.spritesheet('victim3', '/assets/Victim3.png', 40, 40, 12);
+        this.load.spritesheet('victim4', '/assets/Victim4.png', 40, 40, 12);
+        this.load.spritesheet('victim5', '/assets/Victim5.png', 40, 40, 12);
     },
 
     create : function () {
@@ -69,6 +74,13 @@ FastFoodGame.prototype = {
             new Zombie(this, 'zombie6', {x: 200, y: 550})
         );
 
+        this.victims.push(
+            new Victim(this, 'victim2', {x: 420, y: 520}),
+            new Victim(this, 'victim3', {x: 20, y: 520}),
+            new Victim(this, 'victim4', {x: 200, y: 320}),
+            new Victim(this, 'victim5', {x: 620, y: 520})
+        );
+
         this.hero = new Hero(this, 'hero', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
 
@@ -92,6 +104,29 @@ FastFoodGame.prototype = {
         for (var i=0; i<this.zombies.length; i++) {
             this.zombies[i].update(this.zombies);
             this.zombies[i].move(this.hero);
+        }
+
+        for (var i=0; i<this.victims.length; i++) {
+
+            if (this.victims[i] == null) {
+                continue;
+            }
+
+            if (this.victims[i].isDead == false) {
+                this.victims[i].update(this.zombies);
+                this.victims[i].move(this.hero);
+
+            } else {
+                this.zombies.push(new Zombie(this, 'zombie1', {x: this.victims[i].sprite.x, y: this.victims[i].sprite.y}));
+                var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Eaten! run! run!", {
+                    font: "48px Arial",
+                    fill: "#ff0044",
+                    align: "left"
+                });
+                dieText.fixedToCamera = false;
+                this.victims[i].sprite.kill();
+                this.victims[i] = null;
+            }
         }
 
         if (this.hero.isDead) {
