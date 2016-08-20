@@ -27,11 +27,8 @@ var text;
 var count = 0;
 var zombie;
 
-var walls;
-
 function preload() {
-    //game.load.tilemap('map', "test-desert.json", null, Phaser.Tilemap.TILED_JSON);
-    game.load.tilemap('map', "tilemap-custo.json", null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
     game.load.image(tilesetName, tilesetUrl);
     game.load.image(shroomName, shroomUrl);
     game.load.spritesheet('zombie', zombieSprite, 40, 40, 12);
@@ -40,58 +37,47 @@ function preload() {
 
 function create() {
 
-    game.physics.startSystem(Phaser.Physics.P2JS);
-    game.physics.p2.setImpactEvents(true);
-
+    game.physics.startSystem(Phaser.Physics.ARCADE);
     cursors = game.input.keyboard.createCursorKeys();
 
     map = game.add.tilemap('map');
     map.addTilesetImage(tilesetName);
 
-    var shroomCG = game.physics.p2.createCollisionGroup();
-    var playerCG = game.physics.p2.createCollisionGroup();
-    var wallsCG =  game.physics.p2.createCollisionGroup();
-    var zombieCG = game.physics.p2.createCollisionGroup();
-
-    walls = game.physics.p2.convertCollisionObjects(map, "Collisions", true);
-
-    //console.log(walls);
-
-    for(var wall in walls) {
-        walls[wall].setCollisionGroup(wallsCG);
-        walls[wall].collides(playerCG);
-        walls[wall].collides(zombieCG);
-    }
-
-    //map.setCollisionByExclusion([30], true, layer);
-
     layer = map.createLayer(backgroundName);
+    layer.resizeWorld();
+
+    map.setCollision(
+        [
+            1, 2, 3,
+            9, 10, 11,
+            17, 18, 19, 20, 21,
+            25, 26, 27, 28, 29,
+            33, 34, 35, 36, 37,
+            41, 42, 43, 44, 45
+        ]
+    );
 
     mushrooms = game.add.group();
     mushrooms.enableBody = true;
-    mushrooms.physicsBodyType = Phaser.Physics.P2JS;
+    mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
 
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < 100; i++) {
         var shroom = mushrooms.create(game.world.randomX, game.world.randomY, shroomName);
-        shroom.body.setCollisionGroup(shroomCG);
-        shroom.body.collides([playerCG, wallsCG]);
+        game.physics.arcade.enable(shroom);
     }
 
-    zombie = game.add.sprite(100, 200, 'zombie');
-    game.physics.p2.enable(zombie);
+
+    zombie = game.add.sprite(50, 200, 'zombie');
+    game.physics.arcade.enable(zombie);
     zombie.body.fixedRotation = true;
-    zombie.body.setCollisionGroup(zombieCG);
-    zombie.body.collides(playerCG);
-    zombie.body.collides(wallsCG);
     zombie.animations.add('walk-down', [0, 1, 2], frameRate, true);
     zombie.animations.add('walk-right', [3, 4, 5], frameRate, true);
     zombie.animations.add('walk-up', [6, 7, 8], frameRate, true);
     zombie.animations.add('walk-left', [9, 10, 11], frameRate, true);
 
-    hero = game.add.sprite(250, 120, 'hero');
-    game.physics.p2.enable(hero, false);
+    hero = game.add.sprite(100, 120, 'hero');
+    game.physics.arcade.enable(hero);
     hero.body.fixedRotation = true;
-    hero.body.setCircle(28);
 
     hero.animations.add('walk-down', [0, 1, 2], frameRate, true);
     hero.animations.add('walk-right', [3, 4, 5], frameRate, true);
@@ -99,15 +85,11 @@ function create() {
     hero.animations.add('walk-left', [9, 10, 11], frameRate, true);
 
     hero.anchor.setTo(0.5, 0.5);
-    hero.body.setCollisionGroup(playerCG);
-    hero.body.collides(zombieCG, die, this);
-    hero.body.collides(wallsCG);
-    hero.body.collides(shroomCG, collectCoin, this);
 
-    layer.resizeWorld();
+    hero.body.collideWorldBounds = true;
+    hero.body.bounce.set(1);
 
     game.camera.follow(hero);
-    //game.physics.p2.createDistanceConstraint(hero, zombie, 150);
 
     text = game.add.text(game.camera.x,game.camera.y, "Score: 0", {
         font: "24px Arial",
@@ -122,6 +104,11 @@ function update() {
     text.x = game.camera.x;
     text.y = game.camera.y;
 
+    game.physics.arcade.collide(hero, zombie, die);
+    game.physics.arcade.collide(hero, mushrooms, eat);
+    game.physics.arcade.collide(hero, layer);
+    game.physics.arcade.collide(zombie, layer);
+
     move();
 
     followHero();
@@ -129,6 +116,8 @@ function update() {
 
 function render() {
     game.debug.text('Collide!', 32, 32);
+
+    layer.debug;
 }
 
 function move() {
@@ -187,8 +176,8 @@ function followHero() {
 }
 
 function die(player) {
-    player.sprite.kill();
-    var dieText = this.game.add.text(game.camera.width / 2, game.camera.height / 2, "Score: 0", {
+    player.kill();
+    var dieText = game.add.text(game.camera.width / 2, game.camera.height / 2, "Score: 0", {
         font: "48px Arial",
         fill: "#ff0044",
         align: "left"
@@ -203,8 +192,8 @@ function updateText() {
 
 }
 
-function collectCoin(player, coin) {
-    coin.sprite.kill();
+function eat(player, mushroom) {
+    mushroom.kill();
     count++;
     updateText();
 }
