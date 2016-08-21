@@ -15,6 +15,8 @@ var FastFoodGame = function (game) {
     this.scoreText = null;
     this.mainText = null;
 
+    this.easystar = null;
+
     this.wallIndexes = [
         1, 2, 3,
         9, 10, 11,
@@ -86,8 +88,24 @@ FastFoodGame.prototype = {
 
         this.camera.follow(this.hero.sprite);
 
-        var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
+        this.easystar = new EasyStar.js();
+        var grid = [];
+        var tileRows = this.map.layer.data;
+        for (var y = 0; y < tileRows.length; y++) {
+            grid[y] = [];
+            for (var x = 0; x < tileRows[y].length; x++) {
+                if (this.wallIndexes.indexOf(tileRows[y][x].index) == -1) {
+                    grid[y][x] = 0;
+                } else {
+                    grid[y][x] = 1;
+                }
+            }
+        }
+        this.easystar.setGrid(grid);
+        this.easystar.setAcceptableTiles([0]);
+        this.easystar.enableDiagonals();
 
+        var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
         this.scoreText = this.add.text(this.camera.x, this.camera.y, 'Score: 0', style);
         this.scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
 
@@ -102,7 +120,6 @@ FastFoodGame.prototype = {
     },
 
     update : function() {
-
         this.scoreText.x = this.camera.x;
         this.scoreText.y = this.camera.y;
         this.scoreText.setText('Score:' + this.hero.countMushrooms);
