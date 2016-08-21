@@ -15,9 +15,10 @@ var Zombie = function(game, key, position) {
     this.WAIT = 'wait';
     this.HUNT = 'hunt';
     this.state = this.WAIT;
+    this.target = null;
 };
 
-Zombie.prototype.move = function(hero) {
+Zombie.prototype.move = function(hero, victims) {
 
     var scope = 200;
     var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
@@ -32,31 +33,55 @@ Zombie.prototype.move = function(hero) {
     } else {
         this.state = this.HUNT;
 
-        var zombieSpeed = 20;
-        if (hero.sprite.body.y < this.sprite.body.y) {
-            this.sprite.body.velocity.y = zombieSpeed * -1;
-        } else {
-            this.sprite.body.velocity.y = zombieSpeed;
-        }
+        this.chooseTarget(hero, victims);
+        this.hunt();
+    }
+};
 
-        if (hero.sprite.body.x < this.sprite.body.x) {
-            this.sprite.body.velocity.x = zombieSpeed * -1;
-        } else {
-            this.sprite.body.velocity.x = zombieSpeed;
+Zombie.prototype.chooseTarget = function (hero, victims) {
+    this.target = hero;
+    var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
+    var diffX = Math.abs(hero.sprite.body.x - this.sprite.body.x);
+    for (var i = 0; i < victims.length; i++) {
+        var victim = victims[i];
+        var newDiffY = Math.abs(victim.sprite.body.y - this.sprite.body.y);
+        var newDiffX = Math.abs(victim.sprite.body.x - this.sprite.body.x);
+        if (newDiffY < diffY || newDiffX < diffX) {
+            this.target = victim;
+            diffX = newDiffX;
+            diffY = newDiffY;
         }
+    }
+};
 
-        if (diffY >= diffX) {
-            if (hero.sprite.body.y <= this.sprite.body.y) {
-                this.sprite.animations.play('walk-up');
-            } else {
-                this.sprite.animations.play('walk-down');
-            }
+Zombie.prototype.hunt = function () {
+    var diffY = Math.abs(this.target.sprite.body.y - this.sprite.body.y);
+    var diffX = Math.abs(this.target.sprite.body.x - this.sprite.body.x);
+    var zombieSpeed = 20;
+
+    if (this.target.sprite.body.y < this.sprite.body.y) {
+        this.sprite.body.velocity.y = zombieSpeed * -1;
+    } else {
+        this.sprite.body.velocity.y = zombieSpeed;
+    }
+
+    if (this.target.sprite.body.x < this.sprite.body.x) {
+        this.sprite.body.velocity.x = zombieSpeed * -1;
+    } else {
+        this.sprite.body.velocity.x = zombieSpeed;
+    }
+
+    if (diffY >= diffX) {
+        if (this.target.sprite.body.y <= this.sprite.body.y) {
+            this.sprite.animations.play('walk-up');
         } else {
-            if (hero.sprite.body.x <= this.sprite.body.x) {
-                this.sprite.animations.play('walk-left');
-            } else {
-                this.sprite.animations.play('walk-right');
-            }
+            this.sprite.animations.play('walk-down');
+        }
+    } else {
+        if (this.target.sprite.body.x <= this.sprite.body.x) {
+            this.sprite.animations.play('walk-left');
+        } else {
+            this.sprite.animations.play('walk-right');
         }
     }
 };

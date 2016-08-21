@@ -118,7 +118,7 @@ FastFoodGame.prototype = {
 
         for (var i=0; i<this.zombies.length; i++) {
             this.zombies[i].update(this.zombies);
-            this.zombies[i].move(this.hero);
+            this.zombies[i].move(this.hero, this.victims);
         }
 
         for (var i=0; i<this.victims.length; i++) {
