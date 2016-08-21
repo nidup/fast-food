@@ -12,6 +12,7 @@ var Zombie = function(game, key, position) {
     this.sprite.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
     this.sprite.body.collideWorldBounds = true;
     this.sprite.body.bounce.set(1);
+    this.sprite.body.mass = 10;
     this.WAIT = 'wait';
     this.HUNT = 'hunt';
     this.state = this.WAIT;

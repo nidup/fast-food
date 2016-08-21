@@ -6,6 +6,9 @@ var FastFoodGame = function (game) {
     this.layer = null;
 
     this.hero = null;
+    this.startX = null;
+    this.startY = null;
+
     this.zombies = [];
     this.victims = [];
     this.mushrooms = [];
@@ -80,7 +83,9 @@ FastFoodGame.prototype = {
             } else if (characters[i].type == 'victim') {
                 this.victims.push(new Victim(this, characters[i].name, {x: characters[i].x, y: characters[i].y}));
             } else if (characters[i].type == 'hero') {
-                this.hero = new Hero(this, characters[i].name, {x: characters[i].x, y: characters[i].y});
+                this.startX = characters[i].x;
+                this.startY = characters[i].y;
+                this.hero = new Hero(this, characters[i].name, {x: this.startX, y: this.startY});
             } else {
                 console.error(characters[i]);
             }
@@ -168,18 +173,17 @@ FastFoodGame.prototype = {
         var newZombie = new Zombie(this, zombieSpriteKey, {x: this.hero.sprite.x, y: this.hero.sprite.y});
         newZombie.state = newZombie.HUNT;
         this.zombies.push(newZombie);
-        this.displayMessage('You died! You\'re now one of us ...', 2000);
+        this.displayMessage('You\'re now one of us ...', 2000);
         this.hero.sprite.kill();
+        this.hero = new Hero(this, 'victim1', {x: this.startX, y: this.startY});
         this.shakeCamera(20);
-
-        this.game.physics.arcade.isPaused = true;
-
+        this.togglePause();
     },
 
     togglePause : function () {
         this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
         if (this.game.physics.arcade.isPaused == true) {
-            this.displayMessage('Pause! (press space to start)', 100000);
+            this.displayMessage('Pause! (press space to continue)', 100000);
         } else {
             this.mainText.setText('');
         }

@@ -12,6 +12,8 @@ var Victim = function(game, key, position) {
     this.sprite.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
     this.sprite.body.collideWorldBounds = true;
     this.sprite.body.bounce.set(1);
+    this.sprite.body.mass = 10;
+
     this.YELL = 'yell';
     this.EATEN = 'eaten';
     this.FOLLOW = 'follow';
@@ -22,15 +24,15 @@ var Victim = function(game, key, position) {
     this.yellText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help!', style);
     this.astarTimer = 0;
     this.speed = 30;
+    this.visibilityScope = 300;
 };
 
 Victim.prototype.move = function(hero) {
 
-    var scope = 200;
     var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
     var diffX = Math.abs(hero.sprite.body.x - this.sprite.body.x);
 
-    if (diffX < scope && diffY < scope) {
+    if (diffX < this.visibilityScope && diffY < this.visibilityScope) {
         this.state = this.FOLLOW;
     }
     if (this.state == this.FOLLOW) {
