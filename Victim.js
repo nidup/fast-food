@@ -78,17 +78,17 @@ Victim.prototype.eaten = function (victim) {
     }
 };
 
-Victim.prototype.findNextDirection = function (hero) {
+Victim.prototype.findNextDirection = function (target) {
 
     this.astarTimer += this.game.time.elapsed;
     var astarTiming = 2000;
     if (this.astarTimer >= astarTiming ) {
         this.astarTimer -= astarTiming;
         var myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);
-        var heroTile = this.game.map.getTileWorldXY(hero.sprite.x, hero.sprite.y);
+        var targetTile = this.game.map.getTileWorldXY(target.sprite.x, target.sprite.y);
         var mysprite = this.sprite;
         var myspeed = this.speed;
-        this.game.easystar.findPath(myTile.x, myTile.y, heroTile.x, heroTile.y, function (path) {
+        this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
             if (path === null) {
                 console.log("The path to the destination point was not found.");
             } else {

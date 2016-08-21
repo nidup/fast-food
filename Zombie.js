@@ -17,6 +17,8 @@ var Zombie = function(game, key, position) {
     this.state = this.WAIT;
     this.target = null;
     this.visibilityScope = 300;
+    this.astarTimer = 0;
+    this.speed = 20;
 };
 
 Zombie.prototype.move = function(hero, victims) {
@@ -34,7 +36,7 @@ Zombie.prototype.move = function(hero, victims) {
         this.state = this.HUNT;
 
         this.chooseTarget(hero, victims);
-        this.hunt();
+        this.findNextDirection(this.target);
     }
 };
 
@@ -54,38 +56,6 @@ Zombie.prototype.chooseTarget = function (hero, victims) {
     }
 };
 
-Zombie.prototype.hunt = function () {
-    var diffY = Math.abs(this.target.sprite.body.y - this.sprite.body.y);
-    var diffX = Math.abs(this.target.sprite.body.x - this.sprite.body.x);
-    var zombieSpeed = 20;
-
-    if (this.target.sprite.body.y < this.sprite.body.y) {
-        this.sprite.body.velocity.y = zombieSpeed * -1;
-    } else {
-        this.sprite.body.velocity.y = zombieSpeed;
-    }
-
-    if (this.target.sprite.body.x < this.sprite.body.x) {
-        this.sprite.body.velocity.x = zombieSpeed * -1;
-    } else {
-        this.sprite.body.velocity.x = zombieSpeed;
-    }
-
-    if (diffY >= diffX) {
-        if (this.target.sprite.body.y <= this.sprite.body.y) {
-            this.sprite.animations.play('walk-up');
-        } else {
-            this.sprite.animations.play('walk-down');
-        }
-    } else {
-        if (this.target.sprite.body.x <= this.sprite.body.x) {
-            this.sprite.animations.play('walk-left');
-        } else {
-            this.sprite.animations.play('walk-right');
-        }
-    }
-};
-
 Zombie.prototype.update = function(zombies) {
     this.game.physics.arcade.collide(this.sprite, this.game.layer);
     var zombieSprites = [];
@@ -93,4 +63,40 @@ Zombie.prototype.update = function(zombies) {
         zombieSprites.push(zombies[i].sprite);
     }
     this.game.physics.arcade.collide(this.sprite, zombieSprites);
+};
+
+Zombie.prototype.findNextDirection = function (target) {
+
+    this.astarTimer += this.game.time.elapsed;
+    var astarTiming = 2000;
+    if (this.astarTimer >= astarTiming ) {
+        this.astarTimer -= astarTiming;
+        var myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);
+        var targetTile = this.game.map.getTileWorldXY(target.sprite.x, target.sprite.y);
+        var mysprite = this.sprite;
+        var myspeed = this.speed;
+        this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
+            if (path === null) {
+                console.log("The path to the destination point was not found.");
+            } else {
+
+                if (path[1].y < myTile.y) {
+                    mysprite.body.velocity.y = myspeed * -1;
+                    mysprite.animations.play('walk-up');
+                } else {
+                    mysprite.body.velocity.y = myspeed;
+                    mysprite.animations.play('walk-down');
+                }
+
+                if (path[1].x < myTile.x) {
+                    mysprite.body.velocity.x = myspeed * -1;
+                    mysprite.animations.play('walk-left');
+                } else {
+                    mysprite.body.velocity.x = myspeed;
+                    mysprite.animations.play('walk-right');
+                }
+            }
+        });
+        this.game.easystar.calculate();
+    }
 };
