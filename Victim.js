@@ -14,8 +14,11 @@ var Victim = function(game, key, position) {
     this.sprite.body.bounce.set(1);
     this.YELL = 'yell';
     this.FOLLOW = 'follow';
-    this.state = this.WAIT;
+    this.state = this.YELL;
     this.isDead = false;
+    this.yellTimer = 0;
+    var style = { font: "bold 18px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
+    this.yellText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help!', style);
 };
 
 Victim.prototype.move = function(hero) {
@@ -71,22 +74,19 @@ Victim.prototype.update = function(zombies, victims) {
     }
     this.game.physics.arcade.collide(this.sprite, victimSprites);
 
-
-    /*
-    if (this.state == this.WAIT) {
-        var yellText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help !', {
-            font: "12px Arial",
-            fill: "#ff0044",
-            align: "center"
-        });
-
-        yellText.fixedToCamera = false;
-        if (Math.ceil(this.game.time.elapsed / 1000) % 2 == 0) {
-            yellText.visible = !yellText.visible;
-        } else {
-            yellText.visible = !yellText.visible;
+    if (this.state == this.YELL) {
+        this.yellTimer += this.game.time.elapsed;
+        var blinkTiming = 2000;
+        if (this.yellTimer >= blinkTiming ) {
+            this.yellTimer -= blinkTiming;
+            var verticalTween = this.game.add.tween(this.yellText).to({y: this.sprite.y - 40}, 700, Phaser.Easing.Linear.None, true);
+            verticalTween.onComplete.add(function () { this.yellText.y = this.sprite.y - 20}, this);
+            var fadingTween = this.game.add.tween(this.yellText).to({alpha: 0}, 700, Phaser.Easing.Linear.None, true);
+            fadingTween.onComplete.add(function () { this.yellText.alpha = 1}, this);
         }
-    }*/
+    } else {
+        this.yellText.visible = false;
+    }
 };
 
 Victim.prototype.die = function (victim) {
