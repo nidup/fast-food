@@ -34,7 +34,13 @@ Victim.prototype.move = function(hero) {
 
     if (diffX < this.visibilityScope && diffY < this.visibilityScope) {
         this.state = this.FOLLOW;
+    } else if (diffX > 1000) {
+        this.state = this.YELL;
+        this.sprite.animations.play('waiting');
+        this.sprite.body.velocity.x = 0;
+        this.sprite.body.velocity.y = 0;
     }
+
     if (this.state == this.FOLLOW) {
         this.findNextDirection(hero);
     }
@@ -55,6 +61,7 @@ Victim.prototype.update = function(zombies, victims) {
     this.game.physics.arcade.collide(this.sprite, victimSprites);
 
     if (this.state == this.YELL) {
+        //this.yellText.visible = true;
         this.yellTimer += this.game.time.elapsed;
         var blinkTiming = 2000;
         if (this.yellTimer >= blinkTiming ) {
@@ -83,7 +90,7 @@ Victim.prototype.eaten = function (victim) {
 Victim.prototype.findNextDirection = function (target) {
 
     this.astarTimer += this.game.time.elapsed;
-    var astarTiming = 2000;
+    var astarTiming = 1000;
     if (this.astarTimer >= astarTiming ) {
         this.astarTimer -= astarTiming;
         var myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);

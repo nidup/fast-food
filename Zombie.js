@@ -33,6 +33,12 @@ Zombie.prototype.move = function(hero, victims) {
         this.sprite.body.velocity.x = 0;
         this.sprite.body.velocity.y = 0;
 
+    } else if (diffX > 1000) {
+        this.state = this.WAIT;
+        this.sprite.animations.play('wait');
+        this.sprite.body.velocity.x = 0;
+        this.sprite.body.velocity.y = 0;
+
     } else {
         this.state = this.HUNT;
 
@@ -69,7 +75,7 @@ Zombie.prototype.update = function(zombies) {
 Zombie.prototype.findNextDirection = function (target) {
 
     this.astarTimer += this.game.time.elapsed;
-    var astarTiming = 2000;
+    var astarTiming = 1000;
     if (this.astarTimer >= astarTiming ) {
         this.astarTimer -= astarTiming;
         var myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);

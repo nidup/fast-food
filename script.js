@@ -51,6 +51,7 @@ FastFoodGame.prototype = {
         this.load.spritesheet('victim5', '/assets/Victim5.png', 40, 40, 12);
         this.load.spritesheet('victim6', '/assets/Victim6.png', 40, 40, 12);
         this.load.spritesheet('explode', 'assets/explode.png', 128, 128);
+        this.game.time.advancedTiming = true;
     },
 
     create : function () {
@@ -156,6 +157,7 @@ FastFoodGame.prototype = {
     },
 
     render : function () {
+        this.game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
     },
 
     transformVictimToZombie : function (victim) {
