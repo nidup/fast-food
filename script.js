@@ -45,6 +45,7 @@ FastFoodGame.prototype = {
         this.load.spritesheet('victim4', '/assets/Victim4.png', 40, 40, 12);
         this.load.spritesheet('victim5', '/assets/Victim5.png', 40, 40, 12);
         this.load.spritesheet('victim6', '/assets/Victim6.png', 40, 40, 12);
+        this.load.spritesheet('explode', 'assets/explode.png', 128, 128);
     },
 
     create : function () {
