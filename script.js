@@ -13,6 +13,7 @@ var FastFoodGame = function (game) {
     this.cursors = null;
     this.frameRate = 5;
     this.scoreText = null;
+    this.mainText = null;
 
     this.wallIndexes = [
         1, 2, 3,
@@ -22,6 +23,8 @@ var FastFoodGame = function (game) {
         33, 34, 35, 36, 37,
         41, 42, 43, 44, 45
     ];
+
+    this.shakesCount = 0;
 };
 
 FastFoodGame.prototype = {
@@ -66,17 +69,19 @@ FastFoodGame.prototype = {
         }
 
         this.zombies.push(
-            new Zombie(this, 'zombie1', {x: 620, y: 120}),
+            new Zombie(this, 'zombie1', {x: 700, y: 120}),
             new Zombie(this, 'zombie4', {x: 50, y: 300}),
             new Zombie(this, 'zombie2', {x: 50, y: 10}),
             new Zombie(this, 'zombie5', {x: 300, y: 400}),
             new Zombie(this, 'zombie3', {x: 400, y: 800}),
-            new Zombie(this, 'zombie6', {x: 200, y: 550})
+            new Zombie(this, 'zombie6', {x: 200, y: 550}),
+            new Zombie(this, 'zombie3', {x: 650, y: 700}),
+            new Zombie(this, 'zombie6', {x: 550, y: 650})
         );
 
         this.victims.push(
             new Victim(this, 'victim2', {x: 420, y: 520}),
-            new Victim(this, 'victim3', {x: 20, y: 520}),
+            new Victim(this, 'victim3', {x: 840, y: 220}),
             new Victim(this, 'victim4', {x: 200, y: 320}),
             new Victim(this, 'victim5', {x: 620, y: 520})
         );
@@ -84,12 +89,19 @@ FastFoodGame.prototype = {
         this.hero = new Hero(this, 'hero', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
 
-        this.scoreText = this.add.text(this.camera.x, this.camera.y, "Score: 0", {
-            font: "24px Arial",
-            fill: "#ff0044",
-            align: "center"
-        });
+        var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
 
+        this.scoreText = this.add.text(this.camera.x, this.camera.y, 'Score: 0', style);
+        this.scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+
+        this.mainText = game.add.text(0, 0, '', style);
+        this.mainText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+        this.mainText.setTextBounds(0, 100, 800, 100);
+
+        this.mainText.fixedToCamera = true;
+        spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        spaceKey.onDown.add(this.togglePause, this);
+        this.togglePause();
     },
 
     update : function() {
@@ -117,31 +129,63 @@ FastFoodGame.prototype = {
                 this.victims[i].move(this.hero);
 
             } else {
-                this.zombies.push(new Zombie(this, 'zombie1', {x: this.victims[i].sprite.x, y: this.victims[i].sprite.y}));
-                var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Eaten! run! run!", {
-                    font: "48px Arial",
-                    fill: "#ff0044",
-                    align: "left"
-                });
-                dieText.fixedToCamera = false;
+                newZombie = new Zombie(this, 'zombie1', {x: this.victims[i].sprite.x, y: this.victims[i].sprite.y});
+                newZombie.state = newZombie.HUNT;
+                this.zombies.push(newZombie);
+                this.displayMessage('Eaten, one more Zombie! Run! Run!', 2000);
                 this.victims[i].sprite.kill();
                 this.victims[i] = null;
+                this.shakeCamera(20);
             }
         }
 
         if (this.hero.isDead) {
-            var dieText = this.add.text(this.camera.width / 2, this.camera.height / 2, "Score: 0", {
-                font: "48px Arial",
-                fill: "#ff0044",
-                align: "left"
-            });
-            dieText.fixedToCamera = false;
-            dieText.setText("YOU DIED");
+
+            this.zombies.push(new Zombie(this, 'zombie3', {x: this.hero.sprite.x, y: this.hero.sprite.y}));
+            this.displayMessage('You died! You\'re now one of us ...', 2000);
+            this.hero.sprite.kill();
+            this.game.physics.arcade.isPaused = true;
+            this.shakeCamera(20);
         }
+
+        this.updateCamera();
     },
 
     render : function () {
-        //layer.debug;
+    },
+
+    togglePause : function () {
+        this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
+        if (this.game.physics.arcade.isPaused == true) {
+            this.displayMessage('Pause! (press space to start)', 100000);
+        } else {
+            this.mainText.setText('');
+        }
+    },
+
+    displayMessage : function (content, time) {
+        this.mainText.setText(content);
+        this.game.time.events.add(time, function () { this.setText(''); }, this.mainText);
+    },
+
+    shakeCamera : function (count) {
+        this.shakesCount = count;
+    },
+
+    updateCamera : function () {
+        if(this.shakesCount > 0){
+            this.camera.unfollow();
+            var sens = this.shakesCount * 0.5;
+            var shakeX = 10;
+            if(this.shakesCount % 2){
+                this.camera.x += shakeX ? sens : 0;
+            } else{
+                this.camera.x -= shakeX ? sens : 0;
+            }
+            this.shakesCount--;
+        } else {
+            this.camera.follow(this.hero.sprite);
+        }
     }
 };
 
