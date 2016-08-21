@@ -70,26 +70,20 @@ FastFoodGame.prototype = {
             this.physics.arcade.enable(shroom);
         }
 
-        this.zombies.push(
-            new Zombie(this, 'zombie1', {x: 700, y: 120}),
-            new Zombie(this, 'zombie4', {x: 50, y: 300}),
-            new Zombie(this, 'zombie2', {x: 50, y: 10}),
-            new Zombie(this, 'zombie5', {x: 300, y: 400}),
-            new Zombie(this, 'zombie3', {x: 400, y: 800}),
-            new Zombie(this, 'zombie6', {x: 200, y: 550}),
-            new Zombie(this, 'zombie3', {x: 650, y: 700}),
-            new Zombie(this, 'zombie6', {x: 550, y: 650})
-        );
+        var characters = this.map.objects['Characters'];
 
-        this.victims.push(
-            new Victim(this, 'victim2', {x: 420, y: 520}),
-            new Victim(this, 'victim3', {x: 840, y: 220}),
-            new Victim(this, 'victim4', {x: 200, y: 320}),
-            new Victim(this, 'victim5', {x: 620, y: 520}),
-            new Victim(this, 'victim6', {x: 720, y: 580})
-        );
+        for (var i = 0; i < characters.length; i++) {
+            if (characters[i].type == 'zombie') {
+                this.zombies.push(new Zombie(this, characters[i].name, {x: characters[i].x, y: characters[i].y}));
+            } else if (characters[i].type == 'victim') {
+                this.victims.push(new Victim(this, characters[i].name, {x: characters[i].x, y: characters[i].y}));
+            } else if (characters[i].type == 'hero') {
+                this.hero = new Hero(this, characters[i].name, {x: characters[i].x, y: characters[i].y});
+            } else {
+                console.error(characters[i]);
+            }
+        }
 
-        this.hero = new Hero(this, 'victim1', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
 
         var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };

@@ -16,15 +16,15 @@ var Zombie = function(game, key, position) {
     this.HUNT = 'hunt';
     this.state = this.WAIT;
     this.target = null;
+    this.visibilityScope = 300;
 };
 
 Zombie.prototype.move = function(hero, victims) {
 
-    var scope = 200;
     var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
     var diffX = Math.abs(hero.sprite.body.x - this.sprite.body.x);
 
-    if ((diffX > scope || diffY > scope) && this.state != this.HUNT) {
+    if ((diffX > this.visibilityScope || diffY > this.visibilityScope) && this.state != this.HUNT) {
         this.state = this.WAIT;
         this.sprite.animations.play('wait');
         this.sprite.body.velocity.x = 0;
@@ -46,7 +46,7 @@ Zombie.prototype.chooseTarget = function (hero, victims) {
         var victim = victims[i];
         var newDiffY = Math.abs(victim.sprite.body.y - this.sprite.body.y);
         var newDiffX = Math.abs(victim.sprite.body.x - this.sprite.body.x);
-        if (newDiffY < diffY || newDiffX < diffX) {
+        if (newDiffY < diffY && newDiffX < diffX) {
             this.target = victim;
             diffX = newDiffX;
             diffY = newDiffY;
