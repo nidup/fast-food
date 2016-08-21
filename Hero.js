@@ -37,14 +37,21 @@ Hero.prototype.move = function(cursors) {
     }
 };
 
-Hero.prototype.update = function(zombies, mushrooms) {
+Hero.prototype.update = function(zombies, victims, mushrooms) {
     this.game.physics.arcade.collide(this.sprite, mushrooms, this.eat, null, this);
     this.game.physics.arcade.collide(this.sprite, this.game.layer);
+
     var zombieSprites = [];
     for (var i=0; i<zombies.length; i++) {
         zombieSprites.push(zombies[i].sprite);
     }
     this.game.physics.arcade.collide(this.sprite, zombieSprites, this.die, null, this);
+
+    var victimSprites = [];
+    for (var i=0; i<victims.length; i++) {
+        victimSprites.push(victims[i].sprite);
+    }
+    this.game.physics.arcade.collide(this.sprite, victimSprites);
 };
 
 Hero.prototype.die = function (player) {

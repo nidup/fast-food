@@ -39,11 +39,12 @@ FastFoodGame.prototype = {
         this.load.spritesheet('zombie4', '/assets/Zombie4.png', 40, 40, 12);
         this.load.spritesheet('zombie5', '/assets/Zombie5.png', 40, 40, 12);
         this.load.spritesheet('zombie6', '/assets/Zombie6.png', 40, 40, 12);
-        this.load.spritesheet('hero', '/assets/Victim1.png', 40, 40, 12);
+        this.load.spritesheet('victim1', '/assets/Victim1.png', 40, 40, 12);
         this.load.spritesheet('victim2', '/assets/Victim2.png', 40, 40, 12);
         this.load.spritesheet('victim3', '/assets/Victim3.png', 40, 40, 12);
         this.load.spritesheet('victim4', '/assets/Victim4.png', 40, 40, 12);
         this.load.spritesheet('victim5', '/assets/Victim5.png', 40, 40, 12);
+        this.load.spritesheet('victim6', '/assets/Victim6.png', 40, 40, 12);
     },
 
     create : function () {
@@ -83,10 +84,11 @@ FastFoodGame.prototype = {
             new Victim(this, 'victim2', {x: 420, y: 520}),
             new Victim(this, 'victim3', {x: 840, y: 220}),
             new Victim(this, 'victim4', {x: 200, y: 320}),
-            new Victim(this, 'victim5', {x: 620, y: 520})
+            new Victim(this, 'victim5', {x: 620, y: 520}),
+            new Victim(this, 'victim6', {x: 720, y: 580})
         );
 
-        this.hero = new Hero(this, 'hero', {x: 100, y: 120});
+        this.hero = new Hero(this, 'victim1', {x: 100, y: 120});
         this.camera.follow(this.hero.sprite);
 
         var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
@@ -110,7 +112,7 @@ FastFoodGame.prototype = {
         this.scoreText.y = this.camera.y;
         this.scoreText.setText('Score:' + this.hero.countMushrooms);
 
-        this.hero.update(this.zombies, this.mushrooms);
+        this.hero.update(this.zombies, this.victims, this.mushrooms);
         this.hero.move(this.cursors);
 
         for (var i=0; i<this.zombies.length; i++) {
@@ -119,39 +121,47 @@ FastFoodGame.prototype = {
         }
 
         for (var i=0; i<this.victims.length; i++) {
-
-            if (this.victims[i] == null) {
-                continue;
-            }
-
             if (this.victims[i].isDead == false) {
-                this.victims[i].update(this.zombies);
+                this.victims[i].update(this.zombies, this.victims);
                 this.victims[i].move(this.hero);
 
             } else {
-                newZombie = new Zombie(this, 'zombie1', {x: this.victims[i].sprite.x, y: this.victims[i].sprite.y});
-                newZombie.state = newZombie.HUNT;
-                this.zombies.push(newZombie);
-                this.displayMessage('Eaten, one more Zombie! Run! Run!', 2000);
-                this.victims[i].sprite.kill();
-                this.victims[i] = null;
-                this.shakeCamera(20);
+                this.transformVictimToZombie(this.victims[i]);
+                this.victims.splice(i, 1);
             }
         }
 
         if (this.hero.isDead) {
-
-            this.zombies.push(new Zombie(this, 'zombie3', {x: this.hero.sprite.x, y: this.hero.sprite.y}));
-            this.displayMessage('You died! You\'re now one of us ...', 2000);
-            this.hero.sprite.kill();
-            this.game.physics.arcade.isPaused = true;
-            this.shakeCamera(20);
+            this.transformHeroToZombie();
         }
 
         this.updateCamera();
     },
 
     render : function () {
+    },
+
+    transformVictimToZombie : function (victim) {
+        var zombieSpriteKey = 'zombie' + victim.sprite.key.slice(-1);
+        var newZombie = new Zombie(this, zombieSpriteKey, {x: victim.sprite.x, y: victim.sprite.y});
+        newZombie.state = newZombie.HUNT;
+        this.zombies.push(newZombie);
+        this.displayMessage('Eaten, one more Zombie! Run! Run!', 2000);
+        victim.sprite.kill();
+        this.shakeCamera(20);
+    },
+
+    transformHeroToZombie : function () {
+        var zombieSpriteKey = 'zombie' + this.hero.sprite.key.slice(-1);
+        var newZombie = new Zombie(this, zombieSpriteKey, {x: this.hero.sprite.x, y: this.hero.sprite.y});
+        newZombie.state = newZombie.HUNT;
+        this.zombies.push(newZombie);
+        this.displayMessage('You died! You\'re now one of us ...', 2000);
+        this.hero.sprite.kill();
+        this.shakeCamera(20);
+
+        this.game.physics.arcade.isPaused = true;
+
     },
 
     togglePause : function () {
