@@ -87,6 +87,7 @@ Victim.prototype.eaten = function (victim) {
     }
 };
 
+// TODO: extract to refactor with Zombie
 Victim.prototype.findNextDirection = function (target) {
 
     this.astarTimer += this.game.time.elapsed;
@@ -104,18 +105,30 @@ Victim.prototype.findNextDirection = function (target) {
 
                 if (path[1].y < myTile.y) {
                     mysprite.body.velocity.y = myspeed * -1;
-                    mysprite.animations.play('walk-up');
                 } else {
                     mysprite.body.velocity.y = myspeed;
-                    mysprite.animations.play('walk-down');
                 }
 
                 if (path[1].x < myTile.x) {
                     mysprite.body.velocity.x = myspeed * -1;
-                    mysprite.animations.play('walk-left');
                 } else {
                     mysprite.body.velocity.x = myspeed;
-                    mysprite.animations.play('walk-right');
+                }
+
+                var diffY = Math.abs(path[1].y - targetTile.y);
+                var diffX = Math.abs(path[1].x - targetTile.x);
+                if (diffY >= diffX) {
+                    if (path[1].y < myTile.y) {
+                        mysprite.animations.play('walk-up');
+                    } else {
+                        mysprite.animations.play('walk-down');
+                    }
+                } else {
+                    if (path[1].x < myTile.x) {
+                        mysprite.animations.play('walk-left');
+                    } else {
+                        mysprite.animations.play('walk-right');
+                    }
                 }
             }
         });
