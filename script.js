@@ -11,11 +11,10 @@ var FastFoodGame = function (game) {
 
     this.zombies = [];
     this.victims = [];
-    this.mushrooms = [];
 
     this.cursors = null;
     this.frameRate = 5;
-    this.scoreText = null;
+
     this.mainText = null;
 
     this.easystar = null;
@@ -30,6 +29,12 @@ var FastFoodGame = function (game) {
     ];
 
     this.shakesCount = 0;
+
+    this.timerText = null;
+    this.levelTime = 120;
+    this.timer;
+    this.timerEvent;
+
 };
 
 FastFoodGame.prototype = {
@@ -64,17 +69,6 @@ FastFoodGame.prototype = {
         this.layer.resizeWorld();
 
         this.map.setCollision(this.wallIndexes);
-
-        this.mushrooms = this.add.group();
-        this.mushrooms.enableBody = true;
-        this.mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
-
-        for (i = 0; i < 100; i++) {
-            var randomX = this.world.randomX;
-            var randomY = this.world.randomY;
-            var shroom = this.mushrooms.create(randomX, randomY, 'mushrooms');
-            this.physics.arcade.enable(shroom);
-        }
 
         var characters = this.map.objects['Characters'];
 
@@ -111,9 +105,14 @@ FastFoodGame.prototype = {
         this.easystar.setAcceptableTiles([0]);
         this.easystar.enableDiagonals();
 
+        this.timer = this.time.create();
+        this.timerEvent = this.timer.add(Phaser.Timer.SECOND * this.levelTime, this.endTimer, this);
+        this.timer.start();
+
         var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
-        this.scoreText = this.add.text(this.camera.x, this.camera.y, 'Score: 0', style);
-        this.scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+        this.timerText = this.add.text(this.camera.x, this.camera.y, '', style);
+        this.timerText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+        this.timerText.fixedToCamera = true;
 
         this.mainText = game.add.text(0, 0, '', style);
         this.mainText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
@@ -126,11 +125,8 @@ FastFoodGame.prototype = {
     },
 
     update : function() {
-        this.scoreText.x = this.camera.x;
-        this.scoreText.y = this.camera.y;
-        this.scoreText.setText('Score:' + this.hero.countMushrooms);
 
-        this.hero.update(this.zombies, this.victims, this.mushrooms);
+        this.hero.update(this.zombies, this.victims);
         this.hero.move(this.cursors);
 
         for (var i=0; i<this.zombies.length; i++) {
@@ -157,7 +153,24 @@ FastFoodGame.prototype = {
     },
 
     render : function () {
-        this.game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
+
+        this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
+        if (this.timer.running) {
+            this.timerText.setText(this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
+        } else {
+            this.game.debug.text("Done!", 2, 14, "#0f0");
+        }
+    },
+
+    endTimer: function () {
+        this.timer.stop();
+    },
+
+    formatTime: function (s) {
+        var minutes = "0" + Math.floor(s / 60);
+        var seconds = "0" + (s - minutes * 60);
+
+        return minutes.substr(-2) + ":" + seconds.substr(-2);
     },
 
     transformVictimToZombie : function (victim) {
@@ -177,7 +190,13 @@ FastFoodGame.prototype = {
         this.zombies.push(newZombie);
         this.displayMessage('You\'re now one of us ...', 2000);
         this.hero.sprite.kill();
-        this.hero = new Hero(this, 'victim1', {x: this.startX, y: this.startY});
+
+        // TODO: check if there is a zombie here to avoid the re-spawn bug. bug on pause!
+        // this.hero = new Hero(this, 'victim1', {x: this.startX, y: this.startY});
+        var firstVictim = this.victims.shift();
+        firstVictim.yellText.visible = false;
+        this.hero = new Hero(this, firstVictim.key, {x: firstVictim.sprite.x, y: firstVictim.sprite.y});
+        firstVictim.sprite.kill();
         this.shakeCamera(20);
         this.togglePause();
     },
@@ -186,8 +205,10 @@ FastFoodGame.prototype = {
         this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
         if (this.game.physics.arcade.isPaused == true) {
             this.displayMessage('Pause! (press space to continue)', 100000);
+            this.timer.pause();
         } else {
             this.mainText.setText('');
+            this.timer.resume();
         }
     },
 
