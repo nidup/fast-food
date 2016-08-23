@@ -179,7 +179,7 @@ FastFoodGame.prototype = {
         newZombie.state = newZombie.HUNT;
         this.zombies.push(newZombie);
         this.displayMessage('Eaten, one more Zombie! Run! Run!', 2000);
-        victim.sprite.kill();
+        victim.destroy();
         this.shakeCamera(20);
     },
 
@@ -189,14 +189,13 @@ FastFoodGame.prototype = {
         newZombie.state = newZombie.HUNT;
         this.zombies.push(newZombie);
         this.displayMessage('You\'re now one of us ...', 2000);
-        this.hero.sprite.kill();
+        this.hero.destroy();
 
         // TODO: check if there is a zombie here to avoid the re-spawn bug. bug on pause!
         // this.hero = new Hero(this, 'victim1', {x: this.startX, y: this.startY});
         var firstVictim = this.victims.shift();
-        firstVictim.yellText.visible = false;
         this.hero = new Hero(this, firstVictim.key, {x: firstVictim.sprite.x, y: firstVictim.sprite.y});
-        firstVictim.sprite.kill();
+        firstVictim.destroy();
         this.shakeCamera(20);
         this.togglePause();
     },

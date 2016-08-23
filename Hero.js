@@ -52,6 +52,12 @@ Hero.prototype.update = function(zombies, victims) {
     this.game.physics.arcade.collide(this.sprite, victimSprites);
 };
 
+// TODO: extract to refactor with Victim
+Hero.prototype.destroy = function () {
+    this.sprite.destroy();
+}
+
+// TODO: extract to refactor with Victim
 Hero.prototype.eaten = function (victim) {
     this.state = this.EATEN;
     if (this.isDead == false) {

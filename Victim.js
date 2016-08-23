@@ -1,6 +1,7 @@
 var Victim = function(game, key, position) {
     this.game = game;
     this.key = key;
+
     this.sprite = this.game.add.sprite(position.x, position.y, this.key);
     this.game.physics.arcade.enable(this.sprite);
     this.sprite.body.fixedRotation = true;
@@ -19,12 +20,14 @@ var Victim = function(game, key, position) {
     this.FOLLOW = 'follow';
     this.state = this.YELL;
     this.isDead = false;
-    this.yellTimer = 0;
-    var style = { font: "bold 18px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
-    this.yellText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help!', style);
-    this.astarTimer = 0;
     this.speed = 30;
     this.visibilityScope = 300;
+
+    this.speakTimer = 0;
+    var style = { font: "bold 18px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
+    this.speakText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help!', style);
+
+    this.astarTimer = 0;
 };
 
 Victim.prototype.move = function(hero) {
@@ -61,21 +64,34 @@ Victim.prototype.update = function(zombies, victims) {
     this.game.physics.arcade.collide(this.sprite, victimSprites);
 
     if (this.state == this.YELL) {
-        //this.yellText.visible = true;
-        this.yellTimer += this.game.time.elapsed;
-        var blinkTiming = 2000;
-        if (this.yellTimer >= blinkTiming ) {
-            this.yellTimer -= blinkTiming;
-            var verticalTween = this.game.add.tween(this.yellText).to({y: this.sprite.y - 40}, 700, Phaser.Easing.Linear.None, true);
-            verticalTween.onComplete.add(function () { this.yellText.y = this.sprite.y - 20}, this);
-            var fadingTween = this.game.add.tween(this.yellText).to({alpha: 0}, 700, Phaser.Easing.Linear.None, true);
-            fadingTween.onComplete.add(function () { this.yellText.alpha = 1}, this);
-        }
+        this.speakText.setText('Help!');
+    } else if (this.state == this.FOLLOW) {
+        this.speakText.setText('Follow U!');
+    } else if (this.state == this.EATEN) {
+        this.speakText.setText('Argghh!');
+    }
+
+    this.speakTimer += this.game.time.elapsed;
+    var blinkTiming = 2000;
+    if (this.speakTimer >= blinkTiming ) {
+        this.speakTimer -= blinkTiming;
+        var verticalTween = this.game.add.tween(this.speakText).to({y: this.sprite.y - 40}, 700, Phaser.Easing.Linear.None, true);
+        verticalTween.onComplete.add(function () { this.speakText.y = this.sprite.y - 20}, this);
+        var fadingTween = this.game.add.tween(this.speakText).to({alpha: 0}, 700, Phaser.Easing.Linear.None, true);
+        fadingTween.onComplete.add(function () { this.speakText.alpha = 1}, this);
     } else {
-        this.yellText.visible = false;
+        this.speakText.x = this.sprite.x;
+        this.speakText.y = this.sprite.y - 20;
     }
 };
 
+// TODO: extract to refactor with Hero
+Victim.prototype.destroy = function () {
+    this.sprite.destroy();
+    this.speakText.destroy();
+}
+
+// TODO: extract to refactor with Hero
 Victim.prototype.eaten = function (victim) {
     this.state = this.EATEN;
     if (this.isDead == false) {
