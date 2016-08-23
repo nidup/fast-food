@@ -20,7 +20,7 @@ var Victim = function(game, key, position) {
     this.FOLLOW = 'follow';
     this.state = this.YELL;
     this.isDead = false;
-    this.speed = 30;
+    this.speed = 50;
     this.visibilityScope = 300;
 
     this.speakTimer = 0;
@@ -95,7 +95,7 @@ Victim.prototype.destroy = function () {
 Victim.prototype.eaten = function (victim) {
     this.state = this.EATEN;
     if (this.isDead == false) {
-        var dieSprite = this.game.add.sprite(this.sprite.x, this.sprite.y, 'explode');
+        var dieSprite = this.game.add.sprite(this.sprite.x - this.sprite.width, this.sprite.y - this.sprite.height, 'explode');
         dieSprite.animations.add('eaten');
         dieSprite.animations.play('eaten', 20, false, true);
         //dieSprite.animations.currentAnim.onComplete.add(function () {	console.log('animation complete');}, this);

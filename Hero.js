@@ -61,7 +61,7 @@ Hero.prototype.destroy = function () {
 Hero.prototype.eaten = function (victim) {
     this.state = this.EATEN;
     if (this.isDead == false) {
-        var dieSprite = this.game.add.sprite(this.sprite.x, this.sprite.y, 'explode');
+        var dieSprite = this.game.add.sprite(this.sprite.x - this.sprite.width, this.sprite.y - this.sprite.height, 'explode');
         dieSprite.animations.add('eaten');
         dieSprite.animations.play('eaten', 20, false, true);
         //dieSprite.animations.currentAnim.onComplete.add(function () {	console.log('animation complete');}, this);
