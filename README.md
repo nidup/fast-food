@@ -1,2 +1,9 @@
-# phaser
-Playing with Phaser JS
+# Fast Food
+
+Small zombie game developed with Phaser JS for the Akeneo Game Jam #1.
+
+![Image of GameJam](https://github.com/nidup/fast-food/doc/game-jam-1.png)
+
+#  Thanks
+
+To @belohlavek for the following boilerplate https://github.com/belohlavek/phaser-es6-boilerplate

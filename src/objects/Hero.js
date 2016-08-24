@@ -69,3 +69,4 @@ Hero.prototype.eaten = function (victim) {
     }
 };
 
+export default Hero;

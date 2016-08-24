@@ -1,3 +1,7 @@
+import Zombie from 'objects/Zombie';
+import Victim from 'objects/Victim';
+import Hero from 'objects/Hero';
+
 var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'content');
 
 var FastFoodGame = function (game) {
@@ -40,7 +44,7 @@ var FastFoodGame = function (game) {
 FastFoodGame.prototype = {
 
     preload : function () {
-        this.load.tilemap('map', "tilemap.json", null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map', "/assets/tilemap.json", null, Phaser.Tilemap.TILED_JSON);
         this.load.image('Desert', '/assets/Desert.png');
         this.load.image('mushrooms', '/assets/Mushroom.png');
         this.load.spritesheet('zombie1', '/assets/Zombie1.png', 40, 40, 12);
@@ -119,7 +123,7 @@ FastFoodGame.prototype = {
         this.mainText.setTextBounds(0, 100, 800, 100);
 
         this.mainText.fixedToCamera = true;
-        spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        var spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spaceKey.onDown.add(this.togglePause, this);
         this.togglePause();
     },

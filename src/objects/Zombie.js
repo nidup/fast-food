@@ -120,3 +120,5 @@ Zombie.prototype.findNextDirection = function (target) {
         this.game.easystar.calculate();
     }
 };
+
+export default Zombie;

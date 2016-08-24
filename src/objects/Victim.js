@@ -151,3 +151,5 @@ Victim.prototype.findNextDirection = function (target) {
         this.game.easystar.calculate();
     }
 };
+
+export default Victim;
