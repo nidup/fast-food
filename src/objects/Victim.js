@@ -69,7 +69,7 @@ class Victim {
         if (this.state == this.YELL) {
             this.speakText.setText('Help!');
         } else if (this.state == this.FOLLOW) {
-            this.speakText.setText('Follow U!');
+            this.speakText.setText('Follow!');
         } else if (this.state == this.EATEN) {
             this.speakText.setText('Argghh!');
         }

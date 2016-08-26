@@ -205,8 +205,8 @@
                  "type":"zombie",
                  "visible":true,
                  "width":32,
-                 "x":1741,
-                 "y":239
+                 "x":1715,
+                 "y":214
                 }, 
                 {
                  "gid":30,
@@ -365,8 +365,8 @@
                  "type":"zombie",
                  "visible":true,
                  "width":32,
-                 "x":1877,
-                 "y":236
+                 "x":1835,
+                 "y":223
                 }, 
                 {
                  "gid":15,
@@ -1327,6 +1327,166 @@
                  "width":32,
                  "x":6580,
                  "y":207
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":109,
+                 "name":"zombie7",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7035,
+                 "y":668
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":110,
+                 "name":"zombie1",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7210,
+                 "y":582
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":111,
+                 "name":"zombie3",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7482,
+                 "y":273
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":112,
+                 "name":"zombie4",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7953,
+                 "y":192
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":113,
+                 "name":"zombie5",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7936,
+                 "y":410
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":114,
+                 "name":"zombie6",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7926,
+                 "y":676
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":115,
+                 "name":"zombie7",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7677,
+                 "y":62
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":116,
+                 "name":"zombie1",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":7663,
+                 "y":719
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":117,
+                 "name":"zombie7",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":8321,
+                 "y":433
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":118,
+                 "name":"zombie2",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":8697,
+                 "y":564
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1335,7 +1495,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":109,
+ "nextobjectid":119,
  "orientation":"orthogonal",
  "properties":
     {
@@ -1346,7 +1506,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"assets\/Desert.png",
+         "image":"..\/tiles\/Desert.png",
          "imageheight":199,
          "imagewidth":265,
          "margin":1,

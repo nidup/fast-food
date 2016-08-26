@@ -92,19 +92,38 @@ class Play extends Phaser.State {
         this.timerEvent = this.timer.add(Phaser.Timer.SECOND * this.levelTime, this.endTimer, this);
         this.timer.start();
 
-        var style = { font: "bold 32px FeastOfFlesh", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
-        this.timerText = this.add.text(this.camera.x, this.camera.y, '', style);
+        this.timerText = this.add.text(this.camera.x, this.camera.y, '', this.getFontStyle(32));
         this.timerText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
+        this.timerText.setTextBounds(10, 10, 800, 100);
         this.timerText.fixedToCamera = true;
 
-        this.mainText = this.game.add.text(0, 0, '', style);
+        this.mainText = this.game.add.text(0, 0, '', this.getFontStyle(32));
         this.mainText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
-        this.mainText.setTextBounds(0, 220, 800, 100);
+        this.mainText.setTextBounds(250, 220, 800, 100);
 
         this.mainText.fixedToCamera = true;
         var spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spaceKey.onDown.add(this.togglePause, this);
         this.togglePause();
+
+        var zombieAudios = [
+            this.game.add.audio('brains1'),
+            this.game.add.audio('brains2'),
+            this.game.add.audio('brains3'),
+            this.game.add.audio('crackly_groan'),
+            this.game.add.audio('creak1'),
+            this.game.add.audio('creak2'),
+            this.game.add.audio('creak3'),
+            this.game.add.audio('creak4'),
+            this.game.add.audio('creak5'),
+            this.game.add.audio('creak6'),
+            this.game.add.audio('creak7'),
+        ];
+        this.game.time.events.loop (
+            1500, function () {
+                var zombieAudio = zombieAudios[Math.floor(Math.random() * zombieAudios.length)];
+                zombieAudio.play();
+            }, this);
     }
 
     update () {
@@ -143,6 +162,10 @@ class Play extends Phaser.State {
         } else {
             this.game.debug.text("Done!", 2, 14, "#0f0");
         }
+    }
+
+    getFontStyle (fontSize) {
+        return {font: fontSize + "px FeastOfFlesh", fill: "#ff0044", boundsAlignH: "left", boundsAlignV: "top"};
     }
 
     endTimer () {

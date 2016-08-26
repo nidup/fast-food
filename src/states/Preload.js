@@ -1,29 +1,42 @@
 class Preload extends Phaser.State {
 
     preload () {
-        // menu
-        this.load.audio('menu-epic', '/assets/audio/Dangerous.mp3'); // thanks K. Macleod at http://incompetech.com/
-        this.load.audio('sketching', '/assets/audio/pencilsketching.mp3'); // thanks netgfx for https://github.com/netgfx/Phaser-typewriter
-
-        // game
-        this.load.tilemap('map', "/assets/tilemap.json", null, Phaser.Tilemap.TILED_JSON);
-        this.load.image('Desert', '/assets/Desert.png');
-        this.load.image('mushrooms', '/assets/Mushroom.png');
-        this.load.spritesheet('zombie1', '/assets/Zombie1.png', 40, 40, 12);
-        this.load.spritesheet('zombie2', '/assets/Zombie2.png', 40, 40, 12);
-        this.load.spritesheet('zombie3', '/assets/Zombie3.png', 40, 40, 12);
-        this.load.spritesheet('zombie4', '/assets/Zombie4.png', 40, 40, 12);
-        this.load.spritesheet('zombie5', '/assets/Zombie5.png', 40, 40, 12);
-        this.load.spritesheet('zombie6', '/assets/Zombie6.png', 40, 40, 12);
-        this.load.spritesheet('zombie7', '/assets/Zombie7.png', 64, 64, 12);
-        this.load.spritesheet('victim1', '/assets/Victim1.png', 40, 40, 12);
-        this.load.spritesheet('victim2', '/assets/Victim2.png', 40, 40, 12);
-        this.load.spritesheet('victim3', '/assets/Victim3.png', 40, 40, 12);
-        this.load.spritesheet('victim4', '/assets/Victim4.png', 40, 40, 12);
-        this.load.spritesheet('victim5', '/assets/Victim5.png', 40, 40, 12);
-        this.load.spritesheet('victim6', '/assets/Victim6.png', 40, 40, 12);
-        this.load.spritesheet('explode', 'assets/explode.png', 128, 128);
+        // thanks K. Macleod at http://incompetech.com/
+        this.load.audio('menu-epic', '/assets/audio/Dangerous.mp3');
+        // thanks netgfx for https://github.com/netgfx/Phaser-typewriter
+        this.load.audio('sketching', '/assets/audio/pencilsketching.mp3');
+        // thanks http://phaser.io/examples/v2/games/invaders
         this.load.audio('explosion', '/assets/audio/explosion.mp3');
+        // thanks bart http://opengameart.org/content/25-spooky-sound-effects
+        this.load.audio('brains1', '/assets/audio/spookysounds/brains.wav');
+        this.load.audio('brains2', '/assets/audio/spookysounds/brains2.wav');
+        this.load.audio('brains3', '/assets/audio/spookysounds/brains3.wav');
+        this.load.audio('crackly_groan', '/assets/audio/spookysounds/crackly_groan.wav');
+        this.load.audio('creak1', '/assets/audio/spookysounds/creak1.wav');
+        this.load.audio('creak2', '/assets/audio/spookysounds/creak2.wav');
+        this.load.audio('creak3', '/assets/audio/spookysounds/creak3.wav');
+        this.load.audio('creak4', '/assets/audio/spookysounds/creak4.wav');
+        this.load.audio('creak5', '/assets/audio/spookysounds/creak5.wav');
+        this.load.audio('creak6', '/assets/audio/spookysounds/creak6.wav');
+        this.load.audio('creak7', '/assets/audio/spookysounds/creak7.wav');
+        // thanks
+        this.load.spritesheet('zombie1', '/assets/sprites/Zombie1.png', 40, 40, 12);
+        this.load.spritesheet('zombie2', '/assets/sprites/Zombie2.png', 40, 40, 12);
+        this.load.spritesheet('zombie3', '/assets/sprites/Zombie3.png', 40, 40, 12);
+        this.load.spritesheet('zombie4', '/assets/sprites/Zombie4.png', 40, 40, 12);
+        this.load.spritesheet('zombie5', '/assets/sprites/Zombie5.png', 40, 40, 12);
+        this.load.spritesheet('zombie6', '/assets/sprites/Zombie6.png', 40, 40, 12);
+        this.load.spritesheet('zombie7', '/assets/sprites/Zombie7.png', 64, 64, 12);
+        this.load.spritesheet('victim1', '/assets/sprites/Victim1.png', 40, 40, 12);
+        this.load.spritesheet('victim2', '/assets/sprites/Victim2.png', 40, 40, 12);
+        this.load.spritesheet('victim3', '/assets/sprites/Victim3.png', 40, 40, 12);
+        this.load.spritesheet('victim4', '/assets/sprites/Victim4.png', 40, 40, 12);
+        this.load.spritesheet('victim5', '/assets/sprites/Victim5.png', 40, 40, 12);
+        this.load.spritesheet('victim6', '/assets/sprites/Victim6.png', 40, 40, 12);
+        this.load.spritesheet('explode', 'assets/sprites/explode.png', 128, 128);
+
+        this.load.image('Desert', '/assets/tilemaps/tiles/Desert.png');
+        this.load.tilemap('map', "/assets/tilemaps/maps/level1.json", null, Phaser.Tilemap.TILED_JSON);
     }
 
     create () {
