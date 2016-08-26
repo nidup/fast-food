@@ -128,27 +128,24 @@ class Play extends Phaser.State {
 
     update () {
 
-        this.hero.update(this.zombies, this.victims);
-        this.hero.move(this.cursors);
-
-        for (var i=0; i<this.zombies.length; i++) {
-            this.zombies[i].update(this.zombies);
-            this.zombies[i].move(this.hero, this.victims);
+        if (this.hero.isDead == false) {
+            this.hero.play();
+        } else {
+            this.transformHeroToZombie();
         }
 
-        for (var i=0; i<this.victims.length; i++) {
+        for (var i = 0; i < this.zombies.length; i++) {
+            this.zombies[i].play();
+        }
+
+        for (var i = 0; i < this.victims.length; i++) {
             if (this.victims[i].isDead == false) {
-                this.victims[i].update(this.zombies, this.victims);
-                this.victims[i].move(this.hero);
+                this.victims[i].play();
 
             } else {
                 this.transformVictimToZombie(this.victims[i]);
                 this.victims.splice(i, 1);
             }
-        }
-
-        if (this.hero.isDead) {
-            this.transformHeroToZombie();
         }
 
         this.updateCamera();

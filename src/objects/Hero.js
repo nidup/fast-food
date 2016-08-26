@@ -1,6 +1,9 @@
-class Hero {
+import AbstractCharacter from 'objects/AbstractCharacter';
+
+class Hero extends AbstractCharacter {
 
     constructor (game, key, position) {
+        super();
         this.game = game;
         this.key = key;
         this.sprite = this.game.add.sprite(position.x, position.y, this.key);
@@ -14,6 +17,11 @@ class Hero {
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.bounce.set(1);
         this.isDead = false;
+    }
+
+    play () {
+        this.move(this.game.cursors);
+        this.update(this.game.zombies, this.game.victims);
     }
 
     move (cursors) {

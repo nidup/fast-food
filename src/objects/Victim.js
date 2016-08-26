@@ -1,6 +1,9 @@
-class Victim {
+import AbstractCharacter from 'objects/AbstractCharacter';
+
+class Victim extends AbstractCharacter {
 
     constructor(game, key, position) {
+        super();
         this.game = game;
         this.key = key;
 
@@ -31,6 +34,11 @@ class Victim {
         this.speakText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
 
         this.astarTimer = 0;
+    }
+
+    play () {
+        this.move(this.game.hero);
+        this.update(this.game.zombies, this.game.victims);
     }
 
     move(hero) {

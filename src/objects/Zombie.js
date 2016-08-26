@@ -1,6 +1,9 @@
-class Zombie {
+import AbstractCharacter from 'objects/AbstractCharacter';
+
+class Zombie extends AbstractCharacter {
 
     constructor(game, key, position) {
+        super();
         this.game = game;
         this.key = key;
         this.sprite = this.game.add.sprite(position.x, position.y, this.key);
@@ -22,6 +25,11 @@ class Zombie {
         this.visibilityScope = 300;
         this.astarTimer = 0;
         this.speed = 20;
+    }
+
+    play () {
+        this.move(this.game.hero, this.game.victims);
+        this.update(this.game.zombies);
     }
 
     move(hero, victims) {
