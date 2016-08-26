@@ -6,7 +6,7 @@ Small zombie game developed with Phaser JS for the Akeneo Game Jam #1.
 
 # Install
 
-npm install
+npm install --save-dev
 
 npm run start
 
