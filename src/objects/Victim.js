@@ -26,8 +26,9 @@ class Victim {
         this.visibilityScope = 300;
 
         this.speakTimer = 0;
-        var style = {font: "bold 18px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle"};
+        var style = {font: "bold 18px FeastOfFlesh", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle"};
         this.speakText = this.game.add.text(this.sprite.x, this.sprite.y - 20, 'Help!', style);
+        this.speakText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
 
         this.astarTimer = 0;
     }
@@ -102,6 +103,8 @@ class Victim {
             var dieSprite = this.game.add.sprite(this.sprite.x - this.sprite.width, this.sprite.y - this.sprite.height, 'explode');
             dieSprite.animations.add('eaten');
             dieSprite.animations.play('eaten', 20, false, true);
+            var explodeAudio = this.game.add.audio('explosion');
+            explodeAudio.play();
             //dieSprite.animations.currentAnim.onComplete.add(function () {	console.log('animation complete');}, this);
             this.isDead = true;
         }

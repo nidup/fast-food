@@ -13,3 +13,4 @@ npm run start
 #  Thanks
 
 To @belohlavek for the following boilerplate https://github.com/belohlavek/phaser-es6-boilerplate
+To Curt for the Zombie Artwork http://opengameart.org/content/zombie-rpg-sprites

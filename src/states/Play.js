@@ -92,14 +92,14 @@ class Play extends Phaser.State {
         this.timerEvent = this.timer.add(Phaser.Timer.SECOND * this.levelTime, this.endTimer, this);
         this.timer.start();
 
-        var style = { font: "bold 32px Arial", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
+        var style = { font: "bold 32px FeastOfFlesh", fill: "#ff0044", boundsAlignH: "center", boundsAlignV: "middle" };
         this.timerText = this.add.text(this.camera.x, this.camera.y, '', style);
-        this.timerText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+        this.timerText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
         this.timerText.fixedToCamera = true;
 
         this.mainText = this.game.add.text(0, 0, '', style);
-        this.mainText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-        this.mainText.setTextBounds(0, 100, 800, 100);
+        this.mainText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
+        this.mainText.setTextBounds(0, 220, 800, 100);
 
         this.mainText.fixedToCamera = true;
         var spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
