@@ -17,6 +17,7 @@ class Hero extends AbstractCharacter {
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.bounce.set(1);
         this.isDead = false;
+        this.isSafe = false;
     }
 
     play () {
@@ -43,6 +44,11 @@ class Hero extends AbstractCharacter {
         } else if (cursors.down.isDown) {
             this.sprite.body.velocity.y = 200;
             this.sprite.animations.play('walk-down');
+        }
+
+        if (this.game.exitX <= this.sprite.x) {
+            this.isSafe = true;
+            this.stop();
         }
     }
 
@@ -77,6 +83,11 @@ class Hero extends AbstractCharacter {
             //dieSprite.animations.currentAnim.onComplete.add(function () {	console.log('animation complete');}, this);
             this.isDead = true;
         }
+    }
+
+    stop () {
+        this.sprite.body.velocity.x = 0;
+        this.sprite.body.velocity.y = 0;
     }
 }
 

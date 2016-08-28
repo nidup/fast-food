@@ -1487,6 +1487,38 @@
                  "width":32,
                  "x":8697,
                  "y":564
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":131,
+                 "name":"zombie1",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":8684,
+                 "y":270
+                }, 
+                {
+                 "gid":30,
+                 "height":32,
+                 "id":132,
+                 "name":"zombie3",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"zombie",
+                 "visible":true,
+                 "width":32,
+                 "x":8477,
+                 "y":267
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1495,7 +1527,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":119,
+ "nextobjectid":134,
  "orientation":"orthogonal",
  "properties":
     {

@@ -6,24 +6,18 @@ class Play extends Phaser.State {
 
     constructor (game) {
         super (game);
-
         this.map = null;
         this.layer = null;
-
         this.hero = null;
         this.startX = null;
         this.startY = null;
-
         this.zombies = [];
         this.victims = [];
-
+        this.exitX = 9300;
         this.cursors = null;
         this.frameRate = 5;
-
         this.mainText = null;
-
         this.easystar = null;
-
         this.wallIndexes = [
             1, 2, 3,
             9, 10, 11,
@@ -32,17 +26,21 @@ class Play extends Phaser.State {
             33, 34, 35, 36, 37,
             41, 42, 43, 44, 45
         ];
-
-        this.shakesCount = 0;
-
+        this.shakesCount = null;
         this.timerText = null;
-        this.levelTime = 30;
-        this.remainingTime = this.levelTime;
-        this.timer;
-        this.timerEvent;
+        this.levelTime = null;
+        this.remainingTime = null;
+        this.timer = null;
+        this.timerEvent = null;
     }
 
     create() {
+        this.levelTime = 100;
+        this.remainingTime = this.levelTime;
+        this.shakesCount = 0;
+        this.playCountdown =false;
+        this.playExplosion = false;
+
         this.game.time.advancedTiming = true;
 
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -103,9 +101,6 @@ class Play extends Phaser.State {
         this.mainText.setTextBounds(250, 220, 800, 100);
 
         this.mainText.fixedToCamera = true;
-        var spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        spaceKey.onDown.add(this.togglePause, this);
-        this.togglePause();
 
         var zombieAudios = [
             this.game.add.audio('brains1'),
@@ -131,11 +126,20 @@ class Play extends Phaser.State {
 
     update () {
 
-        if (this.hero.isDead == false) {
-            this.hero.play();
-        } else {
-            this.transformHeroToZombie();
+        if (this.hero.isSafe == true) {
+            this.displayMessage('Congratz! Out of hell!!!')
+            this.timer.add(Phaser.Timer.SECOND * 3, this.openMenu, this);
+
+            return;
         }
+
+        if (this.hero.isDead == true) {
+            this.transformHeroToZombie();
+
+            return;
+        }
+
+        this.hero.play();
 
         for (var i = 0; i < this.zombies.length; i++) {
             this.zombies[i].play();
@@ -160,21 +164,37 @@ class Play extends Phaser.State {
         if (this.timer.running) {
             this.remainingTime = Math.round((this.timerEvent.delay - this.timer.ms) / 1000);
             this.timerText.setText(this.formatTime(this.remainingTime));
-            if (this.remainingTime == 20 && this.oncePlay != true) {
-                this.oncePlay = true;
+            if (this.remainingTime == 20 && this.playCountdown == false) {
+                this.playCountdown = true;
                 this.countdownAudio.play();
-            } else if (this.remainingTime < 2 && this.onceExplode != true) {
-                this.onceExplode = true;
+            } else if (this.remainingTime < 2 && this.playExplosion == false) {
+                this.playExplosion = true;
+                this.shakeCamera(20);
                 this.finalSprite = this.game.add.sprite(this.hero.sprite.x, this.hero.sprite.y, 'finalexplosion');
                 this.finalSprite.anchor.setTo(0.5);
                 this.finalSprite.scale.setTo(4, 4);
                 this.finalSprite.animations.add('explosion');
                 this.finalSprite.animations.play('explosion', 20);
-            } else if (this.remainingTime == 0) {
-                this.game.state.start('Menu');
+                this.timer.add(Phaser.Timer.SECOND * 1, this.openMenu, this);
             }
-        } else {
-            this.game.debug.text("Done!", 2, 14, "#0f0");
+        }
+    }
+
+    shutdown () {
+        for (var i = 0; i < this.zombies.length; i++) {
+            this.zombies[i].destroy();
+        }
+        for (var i = 0; i < this.victims.length; i++) {
+            this.victims[i].destroy();
+        }
+        this.hero.destroy();
+
+        this.victims = [];
+        this.zombies = []
+        this.hero = null;
+
+        if (this.playCountdown) {
+            this.countdownAudio.stop();
         }
     }
 
@@ -210,31 +230,12 @@ class Play extends Phaser.State {
         this.zombies.push(newZombie);
         this.displayMessage('You\'re now one of us ...', 2000);
         this.hero.destroy();
-
-        // TODO: check if there is a zombie here to avoid the re-spawn bug. bug on pause!
-        // this.hero = new Hero(this, 'victim1', {x: this.startX, y: this.startY});
-        var firstVictim = this.victims.shift();
-        this.hero = new Hero(this, firstVictim.key, {x: firstVictim.sprite.x, y: firstVictim.sprite.y});
-        firstVictim.destroy();
         this.shakeCamera(20);
-        this.togglePause();
+        this.timer.add(Phaser.Timer.SECOND * 2, this.openMenu, this);
     }
 
-    togglePause() {
-        this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
-        if (this.game.physics.arcade.isPaused == true) {
-            this.displayMessage('Pause! (press space to continue)', 100000);
-            this.timer.pause();
-            if (this.remainingTime < 25) {
-                this.countdownAudio.pause();
-            }
-        } else {
-            this.mainText.setText('');
-            this.timer.resume();
-            if (this.remainingTime < 25) {
-                this.countdownAudio.resume();
-            }
-        }
+    openMenu () {
+        this.game.state.start('Menu');
     }
 
     displayMessage(content, time) {

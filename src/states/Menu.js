@@ -1,13 +1,33 @@
 class Menu extends Phaser.State {
 
-    create () {
+    constructor () {
+        super ();
+        this.epicAudio = null;
+        this.writtenAudio = null;
+        this.titleText = null;
+        this.playText = null;
+    }
 
+    create () {
         this.epicAudio = this.game.add.audio('menu-epic');
         this.writtenAudio = this.game.add.audio('sketching');
         //  Being mp3 files these take time to decode, so we can't play them instantly
         //  Using setDecodedCallback we can be notified when they're ALL ready for use.
         //  The audio files could decode in ANY order, we can never be sure which it'll be.
         this.game.sound.setDecodedCallback([this.epicAudio, this.writtenAudio], this.animateBriefing, this);
+    }
+
+    shutdown () {
+        this.writtenAudio.stop();
+        this.epicAudio.stop();
+        this.epicAudio.destroy();
+        this.writtenAudio.destroy();
+        this.titleText.destroy();
+        this.playText.destroy();
+        this.epicAudio = null;
+        this.writtenAudio = null;
+        this.titleText = null;
+        this.playText = null;
     }
 
     animateBriefing () {
@@ -18,18 +38,17 @@ class Menu extends Phaser.State {
 
         this.epicAudio.play();
 
-        var titleText = this.game.add.text(100, 0, 'Fast Food!', this.getFontStyle(60));
-        this.addGradient(titleText);
-        this.game.add.existing(titleText);
-        var bounceTitle = this.game.add.tween(titleText).to( { y: 150 }, 2400, Phaser.Easing.Bounce.Out, true);
+        this.titleText = this.game.add.text(100, 0, 'Fast Food!', this.getFontStyle(60));
+        this.addGradient(this.titleText);
+        this.game.add.existing(this.titleText);
+        var bounceTitle = this.game.add.tween(this.titleText).to( { y: 150 }, 2400, Phaser.Easing.Bounce.Out, true);
 
-        var playText = this.game.add.text(150, 250, '', this.getFontStyle(30));
-        this.addGradient(playText);
-        playText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
-        playText.setTextBounds(0, 0, 100, 100);
-        playText.wordWrapWidth = 10;
-        this.game.add.existing(playText);
-
+        this.playText = this.game.add.text(150, 250, '', this.getFontStyle(30));
+        this.addGradient(this.playText);
+        this.playText.setShadow(1, 1, 'rgba(0,0,0,0.5)', 2);
+        this.playText.setTextBounds(0, 0, 100, 100);
+        this.playText.wordWrapWidth = 10;
+        this.game.add.existing(this.playText);
         this.game.add.tween(bounceTitle).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None);
 
         bounceTitle.onComplete.add(
@@ -39,7 +58,7 @@ class Menu extends Phaser.State {
                 var letterIndex = 0;
                 this.game.time.events.repeat(
                     70, content.length, function () {
-                        playText.text = playText.text + content[letterIndex];
+                        this.playText.text = this.playText.text + content[letterIndex];
                         letterIndex++;
                         if (letterIndex == content.length) {
                             this.writtenAudio.stop();
@@ -51,8 +70,6 @@ class Menu extends Phaser.State {
     }
 
     startGame () {
-        this.writtenAudio.stop();
-        this.epicAudio.stop();
         this.game.state.start('Play');
     }
 

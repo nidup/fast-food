@@ -32,8 +32,7 @@ class Zombie extends AbstractCharacter {
         this.update(this.game.zombies);
     }
 
-    move(hero, victims) {
-
+    move (hero, victims) {
         var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
         var diffX = Math.abs(hero.sprite.body.x - this.sprite.body.x);
 
@@ -57,7 +56,7 @@ class Zombie extends AbstractCharacter {
         }
     }
 
-    chooseTarget(hero, victims) {
+    chooseTarget (hero, victims) {
         this.target = hero;
         var diffY = Math.abs(hero.sprite.body.y - this.sprite.body.y);
         var diffX = Math.abs(hero.sprite.body.x - this.sprite.body.x);
@@ -73,7 +72,7 @@ class Zombie extends AbstractCharacter {
         }
     }
 
-    update(zombies) {
+    update (zombies) {
         this.game.physics.arcade.collide(this.sprite, this.game.layer);
         var zombieSprites = [];
         for (var i = 0; i < zombies.length; i++) {
@@ -82,8 +81,11 @@ class Zombie extends AbstractCharacter {
         this.game.physics.arcade.collide(this.sprite, zombieSprites);
     }
 
+    destroy() {
+        this.sprite.destroy();
+    }
 
-    findNextDirection(target) {
+    findNextDirection (target) {
 
         this.astarTimer += this.game.time.elapsed;
         var astarTiming = 1000;
