@@ -36,7 +36,8 @@ class Play extends Phaser.State {
         this.shakesCount = 0;
 
         this.timerText = null;
-        this.levelTime = 120;
+        this.levelTime = 30;
+        this.remainingTime = this.levelTime;
         this.timer;
         this.timerEvent;
     }
@@ -124,6 +125,8 @@ class Play extends Phaser.State {
                 var zombieAudio = zombieAudios[Math.floor(Math.random() * zombieAudios.length)];
                 zombieAudio.play();
             }, this);
+
+        this.countdownAudio = this.game.add.audio('countdown');
     }
 
     update () {
@@ -155,7 +158,21 @@ class Play extends Phaser.State {
 
         this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
         if (this.timer.running) {
-            this.timerText.setText(this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
+            this.remainingTime = Math.round((this.timerEvent.delay - this.timer.ms) / 1000);
+            this.timerText.setText(this.formatTime(this.remainingTime));
+            if (this.remainingTime == 20 && this.oncePlay != true) {
+                this.oncePlay = true;
+                this.countdownAudio.play();
+            } else if (this.remainingTime < 2 && this.onceExplode != true) {
+                this.onceExplode = true;
+                this.finalSprite = this.game.add.sprite(this.hero.sprite.x, this.hero.sprite.y, 'finalexplosion');
+                this.finalSprite.anchor.setTo(0.5);
+                this.finalSprite.scale.setTo(4, 4);
+                this.finalSprite.animations.add('explosion');
+                this.finalSprite.animations.play('explosion', 20);
+            } else if (this.remainingTime == 0) {
+                this.game.state.start('Menu');
+            }
         } else {
             this.game.debug.text("Done!", 2, 14, "#0f0");
         }
@@ -208,9 +225,15 @@ class Play extends Phaser.State {
         if (this.game.physics.arcade.isPaused == true) {
             this.displayMessage('Pause! (press space to continue)', 100000);
             this.timer.pause();
+            if (this.remainingTime < 25) {
+                this.countdownAudio.pause();
+            }
         } else {
             this.mainText.setText('');
             this.timer.resume();
+            if (this.remainingTime < 25) {
+                this.countdownAudio.resume();
+            }
         }
     }
 

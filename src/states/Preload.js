@@ -19,7 +19,9 @@ class Preload extends Phaser.State {
         this.load.audio('creak5', '/assets/audio/spookysounds/creak5.wav');
         this.load.audio('creak6', '/assets/audio/spookysounds/creak6.wav');
         this.load.audio('creak7', '/assets/audio/spookysounds/creak7.wav');
-        // thanks
+        // thanks Russintheus http://www.freesound.org/people/Russintheus/sounds/165089/#
+        this.load.audio('countdown', '/assets/audio/165089__russintheus__countdown-boom.mp3');
+        // thanks Curt http://opengameart.org/content/zombie-rpg-sprites
         this.load.spritesheet('zombie1', '/assets/sprites/Zombie1.png', 40, 40, 12);
         this.load.spritesheet('zombie2', '/assets/sprites/Zombie2.png', 40, 40, 12);
         this.load.spritesheet('zombie3', '/assets/sprites/Zombie3.png', 40, 40, 12);
@@ -34,6 +36,8 @@ class Preload extends Phaser.State {
         this.load.spritesheet('victim5', '/assets/sprites/Victim5.png', 40, 40, 12);
         this.load.spritesheet('victim6', '/assets/sprites/Victim6.png', 40, 40, 12);
         this.load.spritesheet('explode', 'assets/sprites/explode.png', 128, 128);
+        // thanks http://rswhite.de/dgame5/?page=tutorial&tut=spritesheets
+        this.load.spritesheet('finalexplosion', 'assets/sprites/final-explosion.png', 256, 256);
 
         this.load.image('Desert', '/assets/tilemaps/tiles/Desert.png');
         this.load.tilemap('map', "/assets/tilemaps/maps/level1.json", null, Phaser.Tilemap.TILED_JSON);
