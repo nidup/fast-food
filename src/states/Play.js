@@ -35,7 +35,7 @@ class Play extends Phaser.State {
     }
 
     create() {
-        this.levelTime = 100;
+        this.levelTime = 120;
         this.remainingTime = this.levelTime;
         this.shakesCount = 0;
         this.playCountdown =false;
