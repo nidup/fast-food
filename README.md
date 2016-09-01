@@ -1,12 +1,12 @@
 # Fast Food
 
-Small zombie game developed with Phaser JS for the Akeneo Game Jam #1.
+Small explosive zombie game developed with Phaser JS for the Akeneo Game Jam #1.
 
-![Image of GameJam](https://github.com/nidup/fast-food/doc/game-jam-1.png)
+![Image of GameJam](https://github.com/nidup/fast-food/blob/master/doc/game-jam.png)
 
 # Install
 
-npm install --save-dev
+npm install
 
 npm run start
 
