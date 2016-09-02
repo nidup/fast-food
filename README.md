@@ -6,6 +6,12 @@ Small explosive zombie game rushly developed #uglyCodeAndBugsInside with Phaser 
 
 ![Image of FastFood](doc/fast-food.png)
 
+# Demo
+
+You can access to the demo here https://nidup.github.io/fast-food/build/
+
+Notice that it takes some time to boot, it downloads the whole internet.
+
 # Install
 
 npm install
