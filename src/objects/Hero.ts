@@ -1,9 +1,16 @@
-import AbstractCharacter from 'objects/AbstractCharacter';
 
-class Hero extends AbstractCharacter {
+import Play from "../states/Play";
+export default class Hero
+{
+    public sprite: Phaser.Sprite;
+    public isDead: boolean;
+    public isSafe: boolean;
 
-    constructor (game, key, position) {
-        super();
+    private game: Play;
+    private key: string;
+    private frameRate: number;
+
+    constructor (game: Play, key, position) {
         this.game = game;
         this.key = key;
         this.sprite = this.game.add.sprite(position.x, position.y, this.key);
@@ -73,7 +80,6 @@ class Hero extends AbstractCharacter {
     }
 
     eaten (victim) {
-        this.state = this.EATEN;
         if (this.isDead == false) {
             var dieSprite = this.game.add.sprite(this.sprite.x - this.sprite.width, this.sprite.y - this.sprite.height, 'explode');
             dieSprite.animations.add('eaten');
@@ -90,5 +96,3 @@ class Hero extends AbstractCharacter {
         this.sprite.body.velocity.y = 0;
     }
 }
-
-export default Hero;

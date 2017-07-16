@@ -1,12 +1,10 @@
-class Menu extends Phaser.State {
 
-    constructor () {
-        super ();
-        this.epicAudio = null;
-        this.writtenAudio = null;
-        this.titleText = null;
-        this.playText = null;
-    }
+export default class Menu extends Phaser.State
+{
+    private epicAudio:Phaser.Sound = null;
+    private writtenAudio:Phaser.Sound = null;
+    private titleText:Phaser.Text = null;
+    private playText:Phaser.Text = null;
 
     create () {
         this.epicAudio = this.game.add.audio('menu-epic');
@@ -84,5 +82,3 @@ class Menu extends Phaser.State {
         text.fill = gradient;
     }
 }
-
-export default Menu;

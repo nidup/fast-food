@@ -12,13 +12,34 @@ You can access to the demo here https://nidup.github.io/fast-food/build/
 
 Notice that it takes some time to boot, it downloads the whole internet.
 
-# Install
+# Development
 
-npm install
+## Pre-requisites
 
-# Run
+You need to have `docker` installed
 
-npm run start
+## Run the dev image
+
+Run to mount local project code inside the container and bind ports
+```
+docker run --name phaser -v "$PWD":/usr/src/app -p 8080:8080 -d nidup/phaser:latest
+```
+
+## Install / update project dependencies
+
+```
+docker exec -it phaser npm install
+```
+
+## Launch webpack server in watch mode:
+
+```
+docker exec -it phaser npm run dev
+```
+
+## Test in brower
+
+Access to http://localhost:8080
 
 # Artwork and special thanks
 
