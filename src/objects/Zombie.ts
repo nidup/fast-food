@@ -30,6 +30,8 @@ export default class Zombie
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.bounce.set(1);
         this.sprite.body.mass = 10;
+        this.sprite.anchor.set(0.5, 0.5);
+        this.sprite.body.setCircle(20, 0, 0);
         this.WAIT = 'wait';
         this.HUNT = 'hunt';
         this.state = this.WAIT;

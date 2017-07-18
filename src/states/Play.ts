@@ -76,6 +76,8 @@ export default class Play extends Phaser.State
         this.layer = this.map.createLayer('Ground');
         this.layer.resizeWorld();
 
+        this.layer.debug = true;
+
         this.map.setCollision(this.wallIndexes);
 
         var characters = this.map.objects['Characters'];
@@ -184,10 +186,14 @@ export default class Play extends Phaser.State
         this.updateCamera();
     }
 
-    render() {
-
-        // this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
+    render()
+    {
+        const fps = this.time.fps ? this.time.fps.toString() : '--';
+        this.game.debug.text(fps, 2, 14, "#00ff00");
         if (this.timer.running) {
+
+            this.game.debug.body(this.hero.sprite);
+
             this.remainingTime = Math.round((this.timerEvent.delay - this.timer.ms) / 1000);
             this.timerText.setText(this.formatTime(this.remainingTime));
             if (this.remainingTime == 20 && this.playCountdown == false) {

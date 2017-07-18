@@ -1,5 +1,6 @@
 
 import Play from "../states/Play";
+
 export default class Victim
 {
     public sprite: Phaser.Sprite;
@@ -34,6 +35,8 @@ export default class Victim
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.bounce.set(1);
         this.sprite.body.mass = 10;
+        this.sprite.anchor.set(0.5, 0.5);
+        this.sprite.body.setCircle(20, 0, 0);
 
         this.YELL = 'yell';
         this.EATEN = 'eaten';

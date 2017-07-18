@@ -1,5 +1,6 @@
 
 import Play from "../states/Play";
+
 export default class Hero
 {
     public sprite: Phaser.Sprite;
@@ -23,6 +24,8 @@ export default class Hero
         this.sprite.animations.add('walk-left', [9, 10, 11], this.frameRate, true);
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.bounce.set(1);
+        this.sprite.anchor.set(0.5, 0.5);
+        this.sprite.body.setCircle(20, 0, 0);
         this.isDead = false;
         this.isSafe = false;
     }
