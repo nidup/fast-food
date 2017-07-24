@@ -1,11 +1,40 @@
-import Zombie from 'objects/Zombie';
-import Victim from 'objects/Victim';
-import Hero from 'objects/Hero';
 
-class Play extends Phaser.State {
+import * as EasyStar from "../../node_modules/easystarjs"
+import Hero from "../objects/Hero";
+import Zombie from "../objects/Zombie";
+import Victim from "../objects/Victim";
 
-    constructor (game) {
-        super (game);
+export default class Play extends Phaser.State
+{
+    public hero: Hero;
+    public zombies: Array<Zombie>;
+    public victims: Array<Victim>;
+
+    public map;
+    public layer;
+    public easystar;
+    public exitX: number;
+    public cursors: Phaser.CursorKeys;
+
+    private startX: number;
+    private startY: number;
+    private frameRate: number;
+    private wallIndexes: Array<number>;
+    private mainText;
+    private shakesCount: number;
+    private timerText;
+    private levelTime: number;
+    private remainingTime: number;
+    private timer;
+    private timerEvent;
+    private playCountdown: boolean;
+    private playExplosion: boolean;
+    private finalSprite;
+    private countdownAudio;
+
+    private debug: boolean = false;
+
+    create() {
         this.map = null;
         this.layer = null;
         this.hero = null;
@@ -32,9 +61,8 @@ class Play extends Phaser.State {
         this.remainingTime = null;
         this.timer = null;
         this.timerEvent = null;
-    }
 
-    create() {
+
         this.levelTime = 120;
         this.remainingTime = this.levelTime;
         this.shakesCount = 0;
@@ -49,6 +77,10 @@ class Play extends Phaser.State {
         this.map.addTilesetImage('Desert');
         this.layer = this.map.createLayer('Ground');
         this.layer.resizeWorld();
+
+        if (this.debug) {
+            this.layer.debug = true;
+        }
 
         this.map.setCollision(this.wallIndexes);
 
@@ -127,7 +159,7 @@ class Play extends Phaser.State {
     update () {
 
         if (this.hero.isSafe == true) {
-            this.displayMessage('Congratz! Out of hell!!!')
+            this.displayMessage('Congratz! Out of hell!!!', 0)
             this.timer.add(Phaser.Timer.SECOND * 3, this.openMenu, this);
 
             return;
@@ -156,11 +188,7 @@ class Play extends Phaser.State {
         }
 
         this.updateCamera();
-    }
 
-    render() {
-
-        this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
         if (this.timer.running) {
             this.remainingTime = Math.round((this.timerEvent.delay - this.timer.ms) / 1000);
             this.timerText.setText(this.formatTime(this.remainingTime));
@@ -177,6 +205,15 @@ class Play extends Phaser.State {
                 this.finalSprite.animations.play('explosion', 20);
                 this.timer.add(Phaser.Timer.SECOND * 1, this.openMenu, this);
             }
+        }
+    }
+
+    render()
+    {
+        if (this.debug) {
+            const fps = this.time.fps ? this.time.fps.toString() : '--';
+            this.game.debug.text(fps, 2, 14, "#00ff00");
+            this.game.debug.body(this.hero.sprite);
         }
     }
 
@@ -207,8 +244,10 @@ class Play extends Phaser.State {
     }
 
     formatTime (s) {
-        var minutes = "0" + Math.floor(s / 60);
-        var seconds = "0" + (s - minutes * 60);
+        const min = Math.floor(s / 60);
+        const sec = s - min * 60;
+        const minutes = "0" + min;
+        const seconds = "0" + sec;
 
         return minutes.substr(-2) + ":" + seconds.substr(-2);
     }
@@ -224,7 +263,7 @@ class Play extends Phaser.State {
     }
 
     transformHeroToZombie() {
-        var zombieSpriteKey = 'zombie' + this.hero.sprite.key.slice(-1);
+        var zombieSpriteKey = 'zombie' + (<string>this.hero.sprite.key).slice(-1);
         var newZombie = new Zombie(this, zombieSpriteKey, {x: this.hero.sprite.x, y: this.hero.sprite.y});
         newZombie.state = newZombie.HUNT;
         this.zombies.push(newZombie);
@@ -263,5 +302,3 @@ class Play extends Phaser.State {
         }
     }
 }
-
-export default Play;

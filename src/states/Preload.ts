@@ -1,4 +1,5 @@
-class Preload extends Phaser.State {
+
+export default class Preload extends Phaser.State {
 
     preload () {
         // thanks K. Macleod at http://incompetech.com/
@@ -47,5 +48,3 @@ class Preload extends Phaser.State {
         this.game.state.start('Menu');
     }
 }
-
-export default Preload;
