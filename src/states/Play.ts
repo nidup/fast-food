@@ -32,6 +32,8 @@ export default class Play extends Phaser.State
     private finalSprite;
     private countdownAudio;
 
+    private debug: boolean = false;
+
     create() {
         this.map = null;
         this.layer = null;
@@ -76,7 +78,9 @@ export default class Play extends Phaser.State
         this.layer = this.map.createLayer('Ground');
         this.layer.resizeWorld();
 
-        this.layer.debug = true;
+        if (this.debug) {
+            this.layer.debug = true;
+        }
 
         this.map.setCollision(this.wallIndexes);
 
@@ -184,16 +188,8 @@ export default class Play extends Phaser.State
         }
 
         this.updateCamera();
-    }
 
-    render()
-    {
-        const fps = this.time.fps ? this.time.fps.toString() : '--';
-        this.game.debug.text(fps, 2, 14, "#00ff00");
         if (this.timer.running) {
-
-            this.game.debug.body(this.hero.sprite);
-
             this.remainingTime = Math.round((this.timerEvent.delay - this.timer.ms) / 1000);
             this.timerText.setText(this.formatTime(this.remainingTime));
             if (this.remainingTime == 20 && this.playCountdown == false) {
@@ -209,6 +205,15 @@ export default class Play extends Phaser.State
                 this.finalSprite.animations.play('explosion', 20);
                 this.timer.add(Phaser.Timer.SECOND * 1, this.openMenu, this);
             }
+        }
+    }
+
+    render()
+    {
+        if (this.debug) {
+            const fps = this.time.fps ? this.time.fps.toString() : '--';
+            this.game.debug.text(fps, 2, 14, "#00ff00");
+            this.game.debug.body(this.hero.sprite);
         }
     }
 
