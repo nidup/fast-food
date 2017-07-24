@@ -112,12 +112,9 @@ export default class Zombie
 
             if (myTile === null) {
                 console.log("No tile in the world for this zombie");
+            } else if (targetTile === null) {
+                console.log("No target tile for this zombie");
             } else {
-
-                if (targetTile === null) {
-                    console.log("No target tile for this zombie");
-                }
-
                 this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
                     if (path === null) {
                         console.log("The path to the destination point was not found.");
