@@ -148,13 +148,18 @@ export default class Victim
             const myspeed = this.speed;
 
             if (myTile === null) {
-                console.log("No tile in the world for this victim?");
+                console.log("No tile in the world for this victim");
             } else {
 
                 this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
                     if (path === null) {
                         console.log("The path to the destination point was not found.");
                     } else {
+
+                        if (path.length <= 1) {
+                            console.log("The path does not contain at least 2 tiles.");
+                            return;
+                        }
 
                         if (path[1].y < myTile.y) {
                             mysprite.body.velocity.y = myspeed * -1;
