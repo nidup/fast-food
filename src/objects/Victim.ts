@@ -142,45 +142,51 @@ export default class Victim
         var astarTiming = 1000;
         if (this.astarTimer >= astarTiming) {
             this.astarTimer -= astarTiming;
-            var myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);
-            var targetTile = this.game.map.getTileWorldXY(target.sprite.x, target.sprite.y);
-            var mysprite = this.sprite;
-            var myspeed = this.speed;
-            this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
-                if (path === null) {
-                    console.log("The path to the destination point was not found.");
-                } else {
+            const myTile = this.game.map.getTileWorldXY(this.sprite.x, this.sprite.y);
+            const targetTile = this.game.map.getTileWorldXY(target.sprite.x, target.sprite.y);
+            const mysprite = this.sprite;
+            const myspeed = this.speed;
 
-                    if (path[1].y < myTile.y) {
-                        mysprite.body.velocity.y = myspeed * -1;
+            if (myTile === null) {
+                console.log("No tile in the world for this victim?");
+            } else {
+
+                this.game.easystar.findPath(myTile.x, myTile.y, targetTile.x, targetTile.y, function (path) {
+                    if (path === null) {
+                        console.log("The path to the destination point was not found.");
                     } else {
-                        mysprite.body.velocity.y = myspeed;
-                    }
 
-                    if (path[1].x < myTile.x) {
-                        mysprite.body.velocity.x = myspeed * -1;
-                    } else {
-                        mysprite.body.velocity.x = myspeed;
-                    }
-
-                    var diffY = Math.abs(path[1].y - targetTile.y);
-                    var diffX = Math.abs(path[1].x - targetTile.x);
-                    if (diffY >= diffX) {
                         if (path[1].y < myTile.y) {
-                            mysprite.animations.play('walk-up');
+                            mysprite.body.velocity.y = myspeed * -1;
                         } else {
-                            mysprite.animations.play('walk-down');
+                            mysprite.body.velocity.y = myspeed;
                         }
-                    } else {
+
                         if (path[1].x < myTile.x) {
-                            mysprite.animations.play('walk-left');
+                            mysprite.body.velocity.x = myspeed * -1;
                         } else {
-                            mysprite.animations.play('walk-right');
+                            mysprite.body.velocity.x = myspeed;
+                        }
+
+                        var diffY = Math.abs(path[1].y - targetTile.y);
+                        var diffX = Math.abs(path[1].x - targetTile.x);
+                        if (diffY >= diffX) {
+                            if (path[1].y < myTile.y) {
+                                mysprite.animations.play('walk-up');
+                            } else {
+                                mysprite.animations.play('walk-down');
+                            }
+                        } else {
+                            if (path[1].x < myTile.x) {
+                                mysprite.animations.play('walk-left');
+                            } else {
+                                mysprite.animations.play('walk-right');
+                            }
                         }
                     }
-                }
-            });
-            this.game.easystar.calculate();
+                });
+                this.game.easystar.calculate();
+            }
         }
     }
 }
