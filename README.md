@@ -8,7 +8,7 @@ Small explosive zombie game rushly developed #uglyCodeAndBugsInside with Phaser 
 
 # Demo
 
-You can access to the demo here https://nidup.github.io/fast-food/build/
+You can access to the demo here https://nidup.github.io/fast-food/
 
 Notice that it takes some time to boot, it downloads the whole internet.
 
@@ -40,6 +40,12 @@ docker exec -it phaser npm run dev
 ## Test in brower
 
 Access to http://localhost:8080
+
+## Build to deploy static files
+
+```
+docker exec -it phaser npm run build
+```
 
 # Artwork and special thanks
 
