@@ -8,7 +8,7 @@ Small explosive zombie game rushly developed #uglyCodeAndBugsInside with Phaser 
 
 # Demo
 
-You can access to the demo here https://nidup.github.io/fast-food/
+You can access to the [online demo here](https://nidup.itch.io/fast-food)
 
 Notice that it takes some time to boot, it downloads the whole internet.
 
